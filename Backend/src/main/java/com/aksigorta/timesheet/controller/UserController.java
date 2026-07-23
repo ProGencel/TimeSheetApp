@@ -1,6 +1,7 @@
 package com.aksigorta.timesheet.controller;
 
 import com.aksigorta.timesheet.model.User;
+import com.aksigorta.timesheet.model.UserLoginDto;
 import com.aksigorta.timesheet.model.UserRegisterDto;
 import com.aksigorta.timesheet.repository.UserRepository;
 import com.aksigorta.timesheet.service.UserService;
@@ -25,6 +26,12 @@ public class UserController {
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDto userRegisterDto)
     {
         return userService.register(userRegisterDto);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto)
+    {
+        return userService.login(userLoginDto);
     }
 
 }

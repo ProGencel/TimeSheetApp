@@ -47,6 +47,12 @@
             <artifactId>modelmapper</artifactId>
             <version>3.2.4</version>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
