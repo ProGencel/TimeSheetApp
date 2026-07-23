@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-@Entity
+@Entity(name = "timesheets")
 public class TimeSheet {
 
     @Id
@@ -16,17 +16,17 @@ public class TimeSheet {
     @Column(nullable = false)
     private Long id;
 
-    @ManyToOne
-    private User owner;
+    @Column(nullable = false)
+    private Long user_id;
 
     @PastOrPresent
-    private LocalDate localDate;
+    private LocalDate date;
 
     @PastOrPresent
-    private LocalTime beginTime;
+    private LocalTime start_time;
 
     @PastOrPresent
-    private LocalTime endTime;
+    private LocalTime end_time;
 
     @Column(length = 1028)
     private String description;
