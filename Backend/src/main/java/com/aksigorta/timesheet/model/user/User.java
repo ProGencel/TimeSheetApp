@@ -1,9 +1,8 @@
-package com.aksigorta.timesheet.model;
+package com.aksigorta.timesheet.model.user;
 
+import com.aksigorta.timesheet.model.Role;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Entity(name = "users")

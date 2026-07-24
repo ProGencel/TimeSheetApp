@@ -1,4 +1,4 @@
-package com.aksigorta.timesheet.model;
+package com.aksigorta.timesheet.model.user;
 
 import jakarta.validation.constraints.*;
 import lombok.Value;

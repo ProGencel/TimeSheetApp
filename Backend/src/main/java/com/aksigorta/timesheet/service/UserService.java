@@ -1,9 +1,9 @@
 package com.aksigorta.timesheet.service;
 
-import com.aksigorta.timesheet.model.User;
-import com.aksigorta.timesheet.model.UserLoginDto;
-import com.aksigorta.timesheet.model.UserRegisterDto;
-import com.aksigorta.timesheet.model.UserResponseDto;
+import com.aksigorta.timesheet.model.user.User;
+import com.aksigorta.timesheet.model.user.UserLoginDto;
+import com.aksigorta.timesheet.model.user.UserRegisterDto;
+import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;

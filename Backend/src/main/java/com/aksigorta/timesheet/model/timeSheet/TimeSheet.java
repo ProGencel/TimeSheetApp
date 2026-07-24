@@ -1,4 +1,4 @@
-package com.aksigorta.timesheet.model;
+package com.aksigorta.timesheet.model.timeSheet;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
