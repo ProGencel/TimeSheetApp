@@ -16,8 +16,8 @@ public class TimeSheet {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Long user_id;
+    @Column(nullable = false,name = "user_id")
+    private Long userId;
 
     @PastOrPresent
     private LocalDate date;
