@@ -10,7 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @RestController
 @RequestMapping("timesheet")
@@ -29,6 +30,14 @@ public class TimeSheetController {
     public Page<TimeSheetResponseDto> list(@RequestParam(defaultValue = "0") int page)
     {
         return timeSheetService.listTimeSheets(page);
+    }
+
+    @GetMapping("search")
+    public Page<TimeSheetResponseDto> search(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam LocalDate startDate,
+                                             @RequestParam LocalDate endDate)
+    {
+        return timeSheetService.searchTimeSheets(page,startDate,endDate);
     }
 
 }

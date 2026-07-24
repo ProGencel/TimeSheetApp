@@ -22,11 +22,11 @@ public class TimeSheet {
     @PastOrPresent
     private LocalDate date;
 
-    @PastOrPresent
-    private LocalTime start_time;
+    @Column(name = "start_time")
+    private LocalTime startTime;
 
-    @PastOrPresent
-    private LocalTime end_time;
+    @Column(name = "end_time")
+    private LocalTime endTime;
 
     @Column(length = 1028)
     private String description;

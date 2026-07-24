@@ -2,9 +2,7 @@ package com.aksigorta.timesheet.model.timeSheet;
 
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
-import lombok.Value;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -13,11 +11,11 @@ import java.time.LocalTime;
  */
 @Data
 public class TimeSheetResponseDto {
+
+    LocalTime startTime;
+    LocalTime endTime;
+    String description;
+
     @PastOrPresent
     LocalDate date;
-    @PastOrPresent
-    LocalTime start_time;
-    @PastOrPresent
-    LocalTime end_time;
-    String description;
 }

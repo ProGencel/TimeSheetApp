@@ -17,11 +17,9 @@ public class TimeSheetSaveDto{
     @PastOrPresent
     LocalDate date;
     @NotNull
-    @PastOrPresent
-    LocalTime start_time;
+    LocalTime startTime;
     @NotNull
-    @PastOrPresent
-    LocalTime end_time;
+    LocalTime endTime;
     @Size
     String description;
 
