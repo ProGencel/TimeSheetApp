@@ -28,10 +28,15 @@ public class TimeSheetService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
+    private Long getCurrentUserId()
+    {
+        return 1L;
+    }
+
     public ResponseEntity<?> save(TimeSheetSaveDto timeSheetSaveDto)
     {
         // TODO: add JWT authentication
-        Long userId = 1L;
+        Long userId = getCurrentUserId();
 
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent())
@@ -61,7 +66,7 @@ public class TimeSheetService {
     public Page<TimeSheetResponseDto> listTimeSheets(int page)
     {
         // TODO: add JWT authentication
-        Long userid = 1L;
+        Long userid = getCurrentUserId();
 
         Sort sort = Sort.by(Sort.Direction.DESC,"date");
         Pageable pageable = PageRequest.of(page,10,sort);
@@ -75,7 +80,7 @@ public class TimeSheetService {
     public Page<TimeSheetResponseDto> searchTimeSheets(int page, LocalDate startDate, LocalDate endDate)
     {
         // TODO: add JWT authentication
-        Long userId = 1L;
+        Long userId = getCurrentUserId();
 
         Sort sort = Sort.by(Sort.Direction.DESC,"date");
         Pageable pageable = PageRequest.of(page,10,sort);
@@ -85,6 +90,28 @@ public class TimeSheetService {
         Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
 
         return timeSheetResponseDtoPage;
+    }
+
+    public ResponseEntity<?> updateTimeSheet(Long id,TimeSheetSaveDto timeSheetSaveDto)
+    {
+        Optional<TimeSheet> timeSheetOptional = timeSheetRepository.findById(id);
+
+        if(timeSheetOptional.isPresent())
+        {
+            Long user_id = getCurrentUserId();
+
+            TimeSheet timeSheet = timeSheetOptional.get();
+            if(timeSheet.getUserId().equals(user_id))
+            {
+                modelMapper.map(timeSheetSaveDto,timeSheet);
+                timeSheet.setUserId(user_id);
+                timeSheet.setId(id);
+                timeSheetRepository.save(timeSheet);
+                return ResponseEntity.ok().body(timeSheet);
+            }
+            return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","This timesheet does not belongs to you"));
+        }
+        return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","Please try again with present timesheet"));
     }
 
 }

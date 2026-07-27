@@ -40,4 +40,11 @@ public class TimeSheetController {
         return timeSheetService.searchTimeSheets(page,startDate,endDate);
     }
 
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestBody @Valid TimeSheetSaveDto timeSheetSaveDto)
+    {
+        return timeSheetService.updateTimeSheet(id,timeSheetSaveDto);
+    }
+
 }
