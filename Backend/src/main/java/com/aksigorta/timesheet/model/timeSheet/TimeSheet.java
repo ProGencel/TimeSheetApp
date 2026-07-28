@@ -1,5 +1,6 @@
 package com.aksigorta.timesheet.model.timeSheet;
 
+import com.aksigorta.timesheet.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
@@ -16,9 +17,6 @@ public class TimeSheet {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false,name = "user_id")
-    private Long userId;
-
     @PastOrPresent
     private LocalDate date;
 
@@ -30,5 +28,9 @@ public class TimeSheet {
 
     @Column(length = 1028)
     private String description;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private User user;
 
 }

@@ -1,5 +1,6 @@
 package com.aksigorta.timesheet.model.timeSheet;
 
+import com.aksigorta.timesheet.model.user.UserResponseDto;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
@@ -18,4 +19,6 @@ public class TimeSheetResponseDto {
 
     @PastOrPresent
     LocalDate date;
+
+    UserResponseDto userResponseDto;
 }

@@ -4,6 +4,7 @@ import com.aksigorta.timesheet.model.timeSheet.TimeSheet;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetSaveDto;
 import com.aksigorta.timesheet.model.user.User;
+import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jspecify.annotations.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,23 +51,32 @@ public class TimeSheetService {
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent())
         {
+            if(timeSheetSaveDto.getEndTime().isBefore(timeSheetSaveDto.getStartTime()))
+            {
+                Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please enter a valid time");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
             if(timeSheetSaveDto.getDate().equals(LocalDate.now()))
             {
                 LocalTime startTime = timeSheetSaveDto.getStartTime();
                 LocalTime endTime = timeSheetSaveDto.getEndTime();
 
-                boolean isPast = startTime.isAfter(LocalTime.now()) || endTime.isAfter(LocalTime.now());
+                boolean isFuture = startTime.isAfter(LocalTime.now()) || endTime.isAfter(LocalTime.now());
 
-                if(isPast)
+                if(isFuture)
                 {
                     Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please enter a valid time");
                     return ResponseEntity.badRequest().body(errorMap);
                 }
             }
             TimeSheet timeSheet = modelMapper.map(timeSheetSaveDto,TimeSheet.class);
-            timeSheet.setUserId(userId);
+            UserResponseDto userResponseDto = modelMapper.map(userOptional.get(),UserResponseDto.class);
+            timeSheet.setUser(userOptional.get());
             timeSheetRepository.save(timeSheet);
-            return ResponseEntity.ok().body(timeSheet);
+
+            TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
+            timeSheetResponseDto.setUserResponseDto(userResponseDto);
+            return ResponseEntity.ok().body(timeSheetResponseDto);
         }
         Map<String,Object> errorMap = Map.of("Error Message: ","Please login first");
         return ResponseEntity.badRequest().body(errorMap);
@@ -80,9 +91,7 @@ public class TimeSheetService {
         Pageable pageable = PageRequest.of(page,10,sort);
         Page<TimeSheet> timeSheetPage = timeSheetRepository.findByUserIdEquals(userid,pageable);
 
-        Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
-
-        return timeSheetResponseDtoPage;
+        return getTimeSheetResponseDtos(timeSheetPage);
     }
 
     public Page<TimeSheetResponseDto> searchTimeSheets(int page, LocalDate startDate, LocalDate endDate)
@@ -95,40 +104,42 @@ public class TimeSheetService {
         Page<TimeSheet> timeSheetPage = timeSheetRepository.
                 findByUserIdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(userId,startDate,endDate,pageable);
 
-        Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
-
-        return timeSheetResponseDtoPage;
+        return getTimeSheetResponseDtos(timeSheetPage);
     }
 
-    public List<TimeSheetResponseDto> searchTimeSheetsForExport(LocalDate startDate,LocalDate endDate)
+    public List<TimeSheetResponseDto> searchTimeSheetsForExport(LocalDate startDate, LocalDate endDate)
     {
-        // TODO: add JWT authentication
         Long userId = getCurrentUserId();
 
-        Sort sort = Sort.by(Sort.Direction.DESC,"date");
-        List<TimeSheet> timeSheetList = timeSheetRepository.findAllForExport(userId,startDate,endDate,sort);
+        Sort sort = Sort.by(Sort.Direction.DESC, "date");
+        List<TimeSheet> timeSheetList = timeSheetRepository.findAllForExport(userId, startDate, endDate, sort);
 
-        List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream().map((element) -> modelMapper.map(element, TimeSheetResponseDto.class)).toList();
+        List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream()
+                .map((element) -> mapToResponseDto(element))
+                .toList();
         return timeSheetResponseDtoList;
-
     }
 
     public ResponseEntity<?> updateTimeSheet(Long id,TimeSheetSaveDto timeSheetSaveDto)
     {
+        Long user_id = getCurrentUserId();
         Optional<TimeSheet> timeSheetOptional = timeSheetRepository.findById(id);
+        Optional<User> userOptional = userRepository.findById(user_id);
 
-        if(timeSheetOptional.isPresent())
+        if(userOptional.isPresent() && timeSheetOptional.isPresent())
         {
-            Long user_id = getCurrentUserId();
-
             TimeSheet timeSheet = timeSheetOptional.get();
-            if(timeSheet.getUserId().equals(user_id))
+            if(timeSheet.getUser().getId().equals(user_id))
             {
+                User user = userOptional.get();
+
+                UserResponseDto userResponseDto = modelMapper.map(user,UserResponseDto.class);
+                TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
+                timeSheetResponseDto.setUserResponseDto(userResponseDto);
                 modelMapper.map(timeSheetSaveDto,timeSheet);
-                timeSheet.setUserId(user_id);
                 timeSheet.setId(id);
                 timeSheetRepository.save(timeSheet);
-                return ResponseEntity.ok().body(timeSheet);
+                return ResponseEntity.ok().body(timeSheetResponseDto);
             }
             return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","This timesheet does not belongs to you"));
         }
@@ -138,6 +149,10 @@ public class TimeSheetService {
     public byte[] toCsv(List<TimeSheetResponseDto> timeSheetList)
     {
         StringBuilder sb = new StringBuilder();
+
+        String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUserResponseDto().getUsername();
+        sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+
         sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
 
         for(TimeSheetResponseDto t : timeSheetList)
@@ -145,7 +160,7 @@ public class TimeSheetService {
             sb.append(t.getDate()).append(",")
                     .append(t.getStartTime()).append(",")
                     .append(t.getEndTime()).append(",")
-                    .append(escapeCsv(t.getDescription())).append(",")
+                    .append(escapeCsv(t.getDescription()))
                     .append("\n");
         }
         return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -158,13 +173,18 @@ public class TimeSheetService {
 
             Sheet sheet = workbook.createSheet("Timesheets");
 
-            Row header = sheet.createRow(0);
+            String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUserResponseDto().getUsername();
+            Row userRow = sheet.createRow(0);
+            userRow.createCell(0).setCellValue("Kullanıcı");
+            userRow.createCell(1).setCellValue(username);
+
+            Row header = sheet.createRow(1);
             String[] columns = {"Tarih","Başlangıç","Bitiş","Açıklama"};
             for(int i = 0;i<columns.length;i++)
             {
                 header.createCell(i).setCellValue(columns[i]);
             }
-            int rowNum = 1;
+            int rowNum = 2;
             for(TimeSheetResponseDto t : timeSheetList)
             {
                 Row row = sheet.createRow(rowNum++);
@@ -195,6 +215,24 @@ public class TimeSheetService {
             return "\"" + value.replace("\"","\"\"") + "\"";
         }
         return value;
+    }
+
+    @NonNull
+    private Page<TimeSheetResponseDto> getTimeSheetResponseDtos(Page<TimeSheet> timeSheetPage) {
+        Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> {
+            TimeSheetResponseDto dto = modelMapper.map(element, TimeSheetResponseDto.class);
+            UserResponseDto userResponseDto = modelMapper.map(element.getUser(), UserResponseDto.class);
+            dto.setUserResponseDto(userResponseDto);
+            return dto;
+        });
+        return timeSheetResponseDtoPage;
+    }
+
+    private TimeSheetResponseDto mapToResponseDto(TimeSheet timeSheet) {
+        TimeSheetResponseDto dto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
+        UserResponseDto userResponseDto = modelMapper.map(timeSheet.getUser(), UserResponseDto.class);
+        dto.setUserResponseDto(userResponseDto);
+        return dto;
     }
 
 }
