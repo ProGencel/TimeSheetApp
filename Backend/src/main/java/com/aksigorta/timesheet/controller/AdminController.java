@@ -4,10 +4,8 @@ import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -23,6 +21,15 @@ public class AdminController {
                                             @RequestParam(defaultValue = "") String q)
     {
         return adminService.searchUser(page,q);
+    }
+
+    @GetMapping("search_timesheets/{userId}")
+    public ResponseEntity<?> searchTimeSheets(@PathVariable Long userId,
+                                              @RequestParam(defaultValue = "0") int page,
+
+                                              @RequestParam(required = false) LocalDate localDate)
+    {
+        return adminService.searchTimeSheet(page,userId,localDate);
     }
 
 }

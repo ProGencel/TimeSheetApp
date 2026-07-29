@@ -70,12 +70,10 @@ public class TimeSheetService {
                 }
             }
             TimeSheet timeSheet = modelMapper.map(timeSheetSaveDto,TimeSheet.class);
-            UserResponseDto userResponseDto = modelMapper.map(userOptional.get(),UserResponseDto.class);
             timeSheet.setUser(userOptional.get());
             timeSheetRepository.save(timeSheet);
 
             TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
-            timeSheetResponseDto.setUserResponseDto(userResponseDto);
             return ResponseEntity.ok().body(timeSheetResponseDto);
         }
         Map<String,Object> errorMap = Map.of("Error Message: ","Please login first");
@@ -133,9 +131,7 @@ public class TimeSheetService {
             {
                 User user = userOptional.get();
 
-                UserResponseDto userResponseDto = modelMapper.map(user,UserResponseDto.class);
                 TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
-                timeSheetResponseDto.setUserResponseDto(userResponseDto);
                 modelMapper.map(timeSheetSaveDto,timeSheet);
                 timeSheet.setId(id);
                 timeSheetRepository.save(timeSheet);
@@ -150,7 +146,8 @@ public class TimeSheetService {
     {
         StringBuilder sb = new StringBuilder();
 
-        String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUserResponseDto().getUsername();
+        String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUser().getUsername();
+
         sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
 
         sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
@@ -173,7 +170,7 @@ public class TimeSheetService {
 
             Sheet sheet = workbook.createSheet("Timesheets");
 
-            String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUserResponseDto().getUsername();
+            String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUser().getUsername();
             Row userRow = sheet.createRow(0);
             userRow.createCell(0).setCellValue("Kullanıcı");
             userRow.createCell(1).setCellValue(username);
@@ -221,8 +218,6 @@ public class TimeSheetService {
     private Page<TimeSheetResponseDto> getTimeSheetResponseDtos(Page<TimeSheet> timeSheetPage) {
         Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> {
             TimeSheetResponseDto dto = modelMapper.map(element, TimeSheetResponseDto.class);
-            UserResponseDto userResponseDto = modelMapper.map(element.getUser(), UserResponseDto.class);
-            dto.setUserResponseDto(userResponseDto);
             return dto;
         });
         return timeSheetResponseDtoPage;
@@ -230,8 +225,6 @@ public class TimeSheetService {
 
     private TimeSheetResponseDto mapToResponseDto(TimeSheet timeSheet) {
         TimeSheetResponseDto dto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
-        UserResponseDto userResponseDto = modelMapper.map(timeSheet.getUser(), UserResponseDto.class);
-        dto.setUserResponseDto(userResponseDto);
         return dto;
     }
 

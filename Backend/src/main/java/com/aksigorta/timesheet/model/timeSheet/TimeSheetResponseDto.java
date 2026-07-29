@@ -20,5 +20,5 @@ public class TimeSheetResponseDto {
     @PastOrPresent
     LocalDate date;
 
-    UserResponseDto userResponseDto;
+    UserResponseDto user;
 }
