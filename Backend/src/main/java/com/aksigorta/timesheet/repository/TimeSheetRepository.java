@@ -27,7 +27,9 @@ public interface TimeSheetRepository extends JpaRepository<TimeSheet,Long> {
                                      Sort sort);
 
     Page<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Pageable pageable);
+    List<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Sort sort);
 
- Page<TimeSheet> findByUser_IdEquals(Long id, Pageable pageable);
+    Page<TimeSheet> findByUser_IdEquals(Long id, Pageable pageable);
+    List<TimeSheet> findByUser_IdEquals(Long id, Sort sort);
 
 }

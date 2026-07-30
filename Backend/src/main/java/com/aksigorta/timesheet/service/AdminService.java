@@ -15,9 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +41,6 @@ public class AdminService {
 
     public ResponseEntity<?> searchTimeSheet(int page, Long userId, LocalDate localDate)
     {
-
-
         Sort sort = Sort.by(Sort.Direction.DESC,"date");
         Pageable pageable = PageRequest.of(page,10,sort);
 
@@ -59,4 +57,99 @@ public class AdminService {
         return ResponseEntity.ok().body(timeSheetResponseDtoPage);
 
     }
+
+    public byte[] toCsv(List<?> dataList)
+    {
+        if(dataList.isEmpty())
+        {
+            return new byte[0];
+        }
+        if(dataList.get(0) instanceof TimeSheetResponseDto)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            @SuppressWarnings("unchecked")
+            List<TimeSheetResponseDto> timeSheetList = (List<TimeSheetResponseDto>) dataList;
+
+            String username = timeSheetList.get(0).getUser().getUsername();
+
+            sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+
+            sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
+
+            for(TimeSheetResponseDto t : timeSheetList)
+            {
+                sb.append(t.getDate()).append(",")
+                        .append(t.getStartTime()).append(",")
+                        .append(t.getEndTime()).append(",")
+                        .append(escapeCsv(t.getDescription()))
+                        .append("\n");
+            }
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
+        }
+        if(dataList.get(0) instanceof UserResponseDto)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            @SuppressWarnings("unchecked")
+            List<UserResponseDto> userResponseDtoList = (List<UserResponseDto>) dataList;
+
+            sb.append("ID,Kullanıcı,Email,Rol\n");
+
+            for(UserResponseDto u : userResponseDtoList)
+            {
+                sb.append(u.getId()).append(",")
+                        .append(escapeCsv(u.getUsername())).append(",")
+                        .append(escapeCsv(u.getEmail())).append(",")
+                        .append(u.getRole())
+                        .append("\n");
+            }
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
+        }
+        return new byte[0];
+    }
+
+    private String escapeCsv(String value)
+    {
+        if(value == null)
+        {
+            return "";
+        }
+        if(value.contains(",") || value.contains("\"") || value.contains("\n"))
+        {
+            return "\"" + value.replace("\"","\"\"") + "\"";
+        }
+        return value;
+    }
+
+    public List<UserResponseDto> searchUserForExport(String q)
+    {
+        Sort sort = Sort.by(Sort.Direction.ASC, "username");
+        List<User> userList = userRepository.findByUsernameContainsIgnoreCaseOrEmailEquals(q, q, sort);
+
+        List<UserResponseDto> userResponseDtoList = userList.stream()
+                .map(element -> modelMapper.map(element, UserResponseDto.class))
+                .toList();
+
+        return userResponseDtoList;
+    }
+
+    public List<TimeSheetResponseDto> searchTimeSheetForExport(Long userId, LocalDate localDate)
+    {
+        Sort sort = Sort.by(Sort.Direction.DESC, "date");
+
+        List<TimeSheet> timeSheetList;
+
+        if (localDate != null) {
+            timeSheetList = timeSheetRepository.findByUser_IdEqualsAndDateEquals(userId, localDate, sort);
+        } else {
+            timeSheetList = timeSheetRepository.findByUser_IdEquals(userId, sort);
+        }
+
+        List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream()
+                .map(element -> modelMapper.map(element, TimeSheetResponseDto.class))
+                .toList();
+        return timeSheetResponseDtoList;
+    }
+
 }

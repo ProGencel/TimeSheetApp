@@ -129,8 +129,6 @@ public class TimeSheetService {
             TimeSheet timeSheet = timeSheetOptional.get();
             if(timeSheet.getUser().getId().equals(user_id))
             {
-                User user = userOptional.get();
-
                 TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
                 modelMapper.map(timeSheetSaveDto,timeSheet);
                 timeSheet.setId(id);
