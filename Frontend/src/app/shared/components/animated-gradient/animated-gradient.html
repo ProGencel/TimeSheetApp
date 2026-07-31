@@ -1,0 +1,17 @@
+<div
+  #container
+  class="absolute inset-0 overflow-hidden"
+  [style.borderRadius]="radius"
+>
+  <canvas #canvas style="display:block; width:100%; height:100%;"></canvas>
+
+  <div
+    *ngIf="noise && noise.opacity > 0"
+    style="position:absolute; inset:0; pointer-events:none; background-repeat:repeat;"
+    [style.backgroundImage]="noiseDataUrl"
+    [style.backgroundSize.px]="(noise.scale ?? 1) * 200"
+    [style.opacity]="noise.opacity / 2"
+  ></div>
+
+  <div *ngIf="hasWebGLError" class="absolute inset-0 bg-neutral-900"></div>
+</div>
