@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class AdminController {
                                     @RequestParam(defaultValue = "csv") String exportFormat,
                                     @RequestParam(defaultValue = "") String q,
                                     @RequestParam(required = false) LocalDate localDate,
-                                    @RequestParam(defaultValue = "user") String inputFormat)
+                                    @RequestParam(defaultValue = "user") String inputFormat) throws IOException
     {
         byte[] fileContent = null;
         MediaType mediaType = null;
@@ -48,22 +49,34 @@ public class AdminController {
 
         if("user".equalsIgnoreCase(inputFormat))
         {
+            List<UserResponseDto> results = adminService.searchUserForExport(q);
             if("csv".equalsIgnoreCase(exportFormat))
             {
-                List<UserResponseDto> results = adminService.searchUserForExport(q);
                 fileContent = adminService.toCsv(results);
                 fileName = "users.csv";
                 mediaType = MediaType.parseMediaType("text/csv");
             }
+            else
+            {
+                fileContent = adminService.toExcel(results);
+                fileName = "users.xlsx";
+                mediaType = MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            }
         }
         else if("timesheet".equalsIgnoreCase(inputFormat))
         {
+            List<TimeSheetResponseDto> results = adminService.searchTimeSheetForExport(userId,localDate);
             if("csv".equalsIgnoreCase(exportFormat))
             {
-                List<TimeSheetResponseDto> results = adminService.searchTimeSheetForExport(userId,localDate);
                 fileContent = adminService.toCsv(results);
                 fileName = "timesheets.csv";
                 mediaType = MediaType.parseMediaType("text/csv");
+            }
+            else
+            {
+                fileContent = adminService.toExcel(results);
+                fileName = "timesheet.xlsx";
+                mediaType = MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
         }
 

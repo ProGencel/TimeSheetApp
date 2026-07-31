@@ -7,6 +7,10 @@ import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -71,14 +77,28 @@ public class AdminService {
             @SuppressWarnings("unchecked")
             List<TimeSheetResponseDto> timeSheetList = (List<TimeSheetResponseDto>) dataList;
 
-            String username = timeSheetList.get(0).getUser().getUsername();
+            boolean singleUser = timeSheetList.stream()
+                    .map(t -> t.getUser() != null ? t.getUser().getId() : null)
+                    .distinct()
+                    .count() == 1;
 
-            sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+            if (singleUser && timeSheetList.get(0).getUser() != null) {
+                String username = timeSheetList.get(0).getUser().getUsername();
+                sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+            }
 
-            sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
+            if (singleUser) {
+                sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
+            } else {
+                sb.append("Kullanıcı,Tarih,Başlangıç,Bitiş,Açıklama\n");
+            }
 
             for(TimeSheetResponseDto t : timeSheetList)
             {
+                if (!singleUser) {
+                    String u = t.getUser() != null ? t.getUser().getUsername() : "";
+                    sb.append(escapeCsv(u)).append(",");
+                }
                 sb.append(t.getDate()).append(",")
                         .append(t.getStartTime()).append(",")
                         .append(t.getEndTime()).append(",")
@@ -105,6 +125,107 @@ public class AdminService {
                         .append("\n");
             }
             return sb.toString().getBytes(StandardCharsets.UTF_8);
+        }
+        return new byte[0];
+    }
+
+    public byte[] toExcel(List<?> dataList) throws IOException
+    {
+        if(dataList.isEmpty())
+        {
+            return new byte[0];
+        }
+        try(Workbook workbook = new XSSFWorkbook();
+            ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            if(dataList.get(0) instanceof TimeSheetResponseDto)
+            {
+                @SuppressWarnings("unchecked")
+                List<TimeSheetResponseDto> timeSheetResponseDtoList = (List<TimeSheetResponseDto>) dataList;
+
+                boolean singleUser = timeSheetResponseDtoList.stream()
+                        .map(t -> t.getUser() != null ? t.getUser().getId() : null)
+                        .distinct()
+                        .count() == 1;
+
+                String sheetName = "TimeSheet";
+                if (singleUser && timeSheetResponseDtoList.get(0).getUser() != null) {
+                    sheetName = "TimeSheet_" + timeSheetResponseDtoList.get(0).getUser().getUsername();
+                }
+                sheetName = sanitizeSheetName(sheetName);
+                Sheet sheet = workbook.createSheet(sheetName);
+
+                int rowIdx = 0;
+
+                if (singleUser && timeSheetResponseDtoList.get(0).getUser() != null) {
+                    Row userRow = sheet.createRow(rowIdx++);
+                    userRow.createCell(0).setCellValue("Kullanıcı");
+                    userRow.createCell(1).setCellValue(timeSheetResponseDtoList.get(0).getUser().getUsername());
+                }
+
+                Row header = sheet.createRow(rowIdx++);
+                String[] columns = singleUser
+                        ? new String[]{"Tarih","Başlangıç","Bitiş","Açıklama"}
+                        : new String[]{"Kullanıcı","Tarih","Başlangıç","Bitiş","Açıklama"};
+                for(int i = 0; i < columns.length; i++)
+                {
+                    header.createCell(i).setCellValue(columns[i]);
+                }
+
+                for(TimeSheetResponseDto t : timeSheetResponseDtoList)
+                {
+                    Row row = sheet.createRow(rowIdx++);
+                    int col = 0;
+                    if (!singleUser) {
+                        String u = t.getUser() != null ? t.getUser().getUsername() : "";
+                        row.createCell(col++).setCellValue(u);
+                    }
+                    row.createCell(col++).setCellValue(t.getDate().toString());
+                    row.createCell(col++).setCellValue(t.getStartTime().toString());
+                    row.createCell(col++).setCellValue(t.getEndTime().toString());
+                    row.createCell(col).setCellValue(t.getDescription());
+                }
+
+                for(int i = 0; i < columns.length; i++)
+                {
+                    sheet.autoSizeColumn(i);
+                }
+
+                workbook.write(out);
+                return out.toByteArray();
+            }
+            else if(dataList.get(0) instanceof UserResponseDto) //ID,Kullanıcı,Email,Rol
+            {
+                @SuppressWarnings("unchecked")
+                List<UserResponseDto> userResponseDtoList = (List<UserResponseDto>) dataList;
+
+                Sheet sheet = workbook.createSheet("users");
+
+                Row header = sheet.createRow(0);
+                String[] columns = {"ID","Kullanıcı","Email","Rol"};
+                for(int i = 0;i< columns.length;i++)
+                {
+                    header.createCell(i).setCellValue(columns[i]);
+                }
+
+                int rowNum = 1;
+                for(UserResponseDto u : userResponseDtoList)
+                {
+                    Row row = sheet.createRow(rowNum++);
+                    row.createCell(0).setCellValue(u.getId().toString());
+                    row.createCell(1).setCellValue(u.getUsername());
+                    row.createCell(2).setCellValue(u.getEmail());
+                    row.createCell(3).setCellValue(u.getRole().toString());
+                }
+
+                for(int i = 0;i< columns.length;i++)
+                {
+                    sheet.autoSizeColumn(i);
+                }
+
+                workbook.write(out);
+                return out.toByteArray();
+            }
         }
         return new byte[0];
     }
@@ -140,16 +261,25 @@ public class AdminService {
 
         List<TimeSheet> timeSheetList;
 
-        if (localDate != null) {
+        if (userId != null && localDate != null) {
             timeSheetList = timeSheetRepository.findByUser_IdEqualsAndDateEquals(userId, localDate, sort);
-        } else {
+        } else if (userId != null) {
             timeSheetList = timeSheetRepository.findByUser_IdEquals(userId, sort);
+        } else if (localDate != null) {
+            timeSheetList = timeSheetRepository.findByDateEquals(localDate, sort);
+        } else {
+            timeSheetList = timeSheetRepository.findAll(sort);
         }
 
         List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream()
                 .map(element -> modelMapper.map(element, TimeSheetResponseDto.class))
                 .toList();
         return timeSheetResponseDtoList;
+    }
+
+    private String sanitizeSheetName(String name) {
+        String cleaned = name.replaceAll("[\\\\/?*\\[\\]:]", "_");
+        return cleaned.length() > 31 ? cleaned.substring(0, 31) : cleaned;
     }
 
 }
