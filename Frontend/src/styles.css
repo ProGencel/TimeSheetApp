@@ -1,7 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import 'tailwindcss';
+@import "tailwindcss";
+@plugin "daisyui";
 
 :root {
   --inter-font: "Inter", sans-serif;
+}
+
+@plugin "daisyui/theme" {
+  name: "oceanictheme";
+  default: true;
+  color-scheme: dark;
+
+  --color-base-100: #041220;
+  --color-base-200: #06192c;
+  --color-base-300: #0a2338;
+  --color-base-content: #e6f7fb;
+
+  --color-primary: #0891b2;
+  --color-primary-content: #00131a;
+
+  --color-secondary: #0e5f7a;
+  --color-secondary-content: #e6f7fb;
+
+  --color-accent: #22d3ee;
+  --color-accent-content: #00131a;
+
+  --color-neutral: #0a2338;
+  --color-neutral-content: #e6f7fb;
+
+  --color-info: #38bdf8;
+  --color-info-content: #001a26;
+
+  --color-success: #10b981;
+  --color-success-content: #001b12;
+
+  --color-warning: #f59e0b;
+  --color-warning-content: #1a1000;
+
+  --color-error: #f43f5e;
+  --color-error-content: #1a000a;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }

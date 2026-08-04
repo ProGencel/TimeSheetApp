@@ -27,7 +27,7 @@ export interface PresetParams {
 
 export const presets: Record<PresetName, PresetParams> = {
   Aurora: {
-    color1: '#0a001a', color2: '#1a0b2e', color3: '#f20089',
+    color1: ' #0a001a', color2: '#1a0b2e', color3: '#f20089',
     rotation: -45, proportion: 60, scale: 0.6, speed: 15,
     distortion: 40, swirl: 80, swirlIterations: 10, softness: 100,
     offset: 200, shape: 'Edge', shapeSize: 50,
