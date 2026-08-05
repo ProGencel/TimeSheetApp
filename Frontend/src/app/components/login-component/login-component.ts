@@ -1,19 +1,21 @@
 import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../../services/auth-service';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {LoginRequest} from '../../models/Login';
 import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-login-component',
   imports: [
-    FormsModule
+    FormsModule,
+    RouterLink
   ],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   errorMessage = signal<string>('');
   username: string = '';
@@ -29,7 +31,7 @@ export class LoginComponent {
 
     this.authService.login(request).subscribe({
       next:(response) => {
-        console.log("Okay",response);
+        void this.router.navigate(['/dashboard']);
       },
       error:(err) => {
         console.log("Error",err);
