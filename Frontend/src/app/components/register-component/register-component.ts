@@ -2,12 +2,14 @@ import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../../services/auth-service';
 import {Router} from '@angular/router';
 import {RegisterRequest} from '../../models/Register';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, NgForm} from '@angular/forms';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-register-component',
   imports: [
-    FormsModule
+    FormsModule,
+    NgClass
   ],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
@@ -22,7 +24,36 @@ export class RegisterComponent {
   email: string = '';
   password: string = '';
 
-  onRegister(): void{
+  get hasAtSymbol(): boolean {
+    return this.email.includes('@');
+  }
+
+  get hasMinLength(): boolean {
+    return this.password.length >= 8;
+  }
+
+  get hasLowerCase(): boolean {
+    return /[a-z]/.test(this.password);
+  }
+
+  get hasUpperCase(): boolean {
+    return /[A-Z]/.test(this.password);
+  }
+
+  get hasSpecialChar(): boolean {
+    return /[@#$%^&+=!.*_\-]/.test(this.password);
+  }
+
+  get isPasswordValid(): boolean {
+    return this.hasMinLength && this.hasLowerCase && this.hasUpperCase && this.hasSpecialChar;
+  }
+
+  onRegister(form: NgForm): void {
+    if (form.invalid || !this.isPasswordValid) {
+      form.control.markAllAsTouched();
+      this.errorMessage.set('Please fill in all fields correctly.');
+      return;
+    }
     const request: RegisterRequest = {
       username: this.username,
       email: this.email,
