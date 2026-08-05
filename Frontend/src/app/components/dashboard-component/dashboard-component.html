@@ -1,38 +1,52 @@
-<div class="card w-full backdrop-blur-md shadow-2xl">
-  <div class="overflow-x-auto">
-    <table class="table">
-      <!-- head -->
-      <thead>
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Job</th>
-        <th>Favorite Color</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- row 1 -->
-      <tr>
-        <th>1</th>
-        <td>Cy Ganderton</td>
-        <td>Quality Control Specialist</td>
-        <td>Blue</td>
-      </tr>
-      <!-- row 2 -->
-      <tr class="hover:bg-base-300">
-        <th>2</th>
-        <td>Hart Hagerty</td>
-        <td>Desktop Support Technician</td>
-        <td>Purple</td>
-      </tr>
-      <!-- row 3 -->
-      <tr>
-        <th>3</th>
-        <td>Brice Swyre</td>
-        <td>Tax Accountant</td>
-        <td>Red</td>
-      </tr>
-      </tbody>
-    </table>
+<div class="h-screen flex flex-col p-6 gap-6">
+
+  <div class="h-1/4 flex flex-col justify-end p-6 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+    <h1 class="text-3xl font-bold">Timesheets</h1>
+    <p class="opacity-80 mt-2">Günlük ve haftalık çalışma saatleriniz aşağıdadır.</p>
+  </div>
+
+  <div class="flex-1 overflow-y-auto">
+
+    <div class="card w-full bg-primary/10 backdrop-blur-2xl shadow-xl border border-primary/30 text-primary-content">
+      <div class="overflow-x-auto">
+        <table class="table">
+
+          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+          <tr>
+            <th>Username</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+          </tr>
+          </thead>
+
+          <tbody>
+            @for (sheet of timesheets(); track $index){
+              <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                <td>{{sheet.user.username}}</td>
+                <td>{{sheet.date}}</td>
+                <td>{{sheet.description}}</td>
+                <td>{{sheet.startTime}}</td>
+                <td>{{sheet.endTime}}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    </div>
+
+  <div class="flex justify-center mt-6">
+    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden">
+      @for(page of pageNumbers(); track $index){
+        <button
+          class = "join-item btn text-primary-content border-none transition-all duration-300"
+          [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-white' : 'bg-primary/10 hover:bg-primary/30'"
+          (click)="loadPage(page)"
+        >{{page + 1}}</button>
+      }
+    </div>
   </div>
 </div>

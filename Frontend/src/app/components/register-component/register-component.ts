@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {AuthService} from '../../services/auth-service';
+import {AuthService} from '../../services/auth-service/auth-service';
 import {Router} from '@angular/router';
 import {RegisterRequest} from '../../models/Register';
 import {FormsModule, NgForm} from '@angular/forms';
