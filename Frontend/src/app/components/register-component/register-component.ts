@@ -1,6 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../../services/auth-service/auth-service';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {RegisterRequest} from '../../models/Register';
 import {FormsModule, NgForm} from '@angular/forms';
 import {NgClass} from '@angular/common';
@@ -9,7 +9,8 @@ import {NgClass} from '@angular/common';
   selector: 'app-register-component',
   imports: [
     FormsModule,
-    NgClass
+    NgClass,
+    RouterLink
   ],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',

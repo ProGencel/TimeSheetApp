@@ -2,11 +2,13 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {TimeSheetService} from '../../services/timesheet-service/time-sheet-service';
 import {TimeSheet} from '../../models/TimeSheet';
 import {NgClass} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-component',
   imports: [
-    NgClass
+    NgClass,
+    RouterLink
   ],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',

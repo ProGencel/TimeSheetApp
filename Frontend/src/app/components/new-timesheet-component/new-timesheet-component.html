@@ -1,0 +1,70 @@
+<div class="relative flex justify-center items-center h-full w-full">
+  <div class="absolute top-2 left-2">
+    <button
+      routerLink = '/dashboard'
+      class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
+      Dashboard</button>
+  </div>
+  <div class="card w-full max-w-md backdrop-blur-md shadow-2xl">
+    <form [formGroup]="formGroup" class="card-body p-6" (ngSubmit)="onSubmit()">
+
+      <h2 class="text-2xl font-bold text-center mb-4">Add New Timesheet</h2>
+
+      @if (errorMessage()) {
+        <div role="alert" class="alert mb-4 bg-error/50 backdrop-blur-sm border border-error/30 text-error">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+          <span class="text-error-content/90">{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <div class="form-control flex flex-row items-center gap-4">
+        <label class="label w-1/4 justify-start p-0" for="date">
+          <span class="label-text">Date</span>
+        </label>
+        <input formControlName="date" type="date"
+          class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+        />
+      </div>
+
+      <div class="form-control flex flex-row items-center gap-4 mt-4">
+        <label class="label w-1/4 justify-start p-0" for="startTime">
+          <span class="label-text">Start Time</span>
+        </label>
+        <input formControlName="startTime" type="time"
+               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+        />
+      </div>
+
+      <div class="form-control flex flex-row items-center gap-4 mt-4">
+        <label class="label w-1/4 justify-start p-0" for="endTime">
+          <span class="label-text">End Time</span>
+        </label>
+        <input formControlName="endTime" type="time"
+               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+        />
+      </div>
+
+      <div class="form-control flex flex-row items-center gap-4 mt-4">
+        <label class="label w-1/4 justify-start p-0" for="description">
+          <span class="label-text">Description</span>
+        </label>
+        <input formControlName="description"
+               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+        />
+      </div>
+
+      <div class="form-control mt-6">
+        <button
+          type="submit"
+          class="w-full btn bg-base-100/40 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-all duration-300 px-8 font-semibold"
+          [disabled]="formGroup.invalid"
+        >
+          Save
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
