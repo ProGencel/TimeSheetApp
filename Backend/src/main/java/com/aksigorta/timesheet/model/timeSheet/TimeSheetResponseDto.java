@@ -13,6 +13,8 @@ import java.time.LocalTime;
 @Data
 public class TimeSheetResponseDto {
 
+    Long id;
+
     LocalTime startTime;
     LocalTime endTime;
     String description;

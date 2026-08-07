@@ -92,6 +92,21 @@ public class TimeSheetService {
         return getTimeSheetResponseDtos(timeSheetPage);
     }
 
+    public TimeSheetResponseDto getTimeSheetById(Long id)
+    {
+        Long userId = getCurrentUserId();
+        Optional<TimeSheet> timeSheetOptional = timeSheetRepository.findById(id);
+        if(timeSheetOptional.isPresent())
+        {
+            TimeSheet timeSheet = timeSheetOptional.get();
+            if(timeSheet.getUser().getId().equals(userId))
+            {
+                return mapToResponseDto(timeSheet);
+            }
+        }
+        return null;
+    }
+
     public Page<TimeSheetResponseDto> searchTimeSheets(int page, LocalDate startDate, LocalDate endDate)
     {
         // TODO: add JWT authentication
@@ -126,6 +141,24 @@ public class TimeSheetService {
 
         if(userOptional.isPresent() && timeSheetOptional.isPresent())
         {
+            if(timeSheetSaveDto.getEndTime().isBefore(timeSheetSaveDto.getStartTime()))
+            {
+                Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please enter a valid time");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+            if(timeSheetSaveDto.getDate().equals(LocalDate.now()))
+            {
+                LocalTime startTime = timeSheetSaveDto.getStartTime();
+                LocalTime endTime = timeSheetSaveDto.getEndTime();
+
+                boolean isFuture = startTime.isAfter(LocalTime.now()) || endTime.isAfter(LocalTime.now());
+
+                if(isFuture)
+                {
+                    Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please enter a valid time");
+                    return ResponseEntity.badRequest().body(errorMap);
+                }
+            }
             TimeSheet timeSheet = timeSheetOptional.get();
             if(timeSheet.getUser().getId().equals(user_id))
             {

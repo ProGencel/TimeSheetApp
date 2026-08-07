@@ -5,6 +5,7 @@ import {PageResponse} from '../../models/PageResponse';
 import {environment} from '../../../environments/environment.development';
 import {TimeSheetSave} from '../../models/TimeSheetSave';
 import {TimeSheet} from '../../models/TimeSheet';
+import {TimeSheetResponse} from '../../models/TimeSheetResponse';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,4 +20,12 @@ export class TimeSheetService {
     return this.http.post<TimeSheetSave>(environment.apiUrl+'/timesheet/save', timesheet);
   }
 
+  updateTimeSheet(timesheet: TimeSheetSave,id: number): Observable<TimeSheetResponse> {
+    console.log(id);
+    return this.http.put<TimeSheetResponse>(`${environment.apiUrl}/timesheet/update/${id}`, timesheet);
+  }
+
+  getTimeSheetById(id: number): Observable<TimeSheetResponse> {
+    return this.http.get<TimeSheetResponse>(`${environment.apiUrl}/timesheet/get/${id}`);
+  }
 }

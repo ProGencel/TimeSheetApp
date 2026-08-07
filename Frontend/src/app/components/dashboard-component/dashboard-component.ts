@@ -2,7 +2,8 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {TimeSheetService} from '../../services/timesheet-service/time-sheet-service';
 import {TimeSheet} from '../../models/TimeSheet';
 import {NgClass} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {environment} from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-dashboard-component',
@@ -15,6 +16,7 @@ import {RouterLink} from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
   private timeSheetService = inject(TimeSheetService);
+  private router = inject(Router);
 
   timesheets = signal<TimeSheet[]>([]);
   currentPage = signal<number>(0);
@@ -44,6 +46,10 @@ export class DashboardComponent implements OnInit {
         this.isLoading.set(false);
       }
     })
+  }
+
+  onUpdate(id: number): void {
+    void this.router.navigate(['/timesheet/update',id]);
   }
 
 }

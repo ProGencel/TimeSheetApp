@@ -1,6 +1,5 @@
 package com.aksigorta.timesheet.controller;
 
-import com.aksigorta.timesheet.model.timeSheet.TimeSheet;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetSaveDto;
 import com.aksigorta.timesheet.service.TimeSheetService;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -36,6 +34,12 @@ public class TimeSheetController {
         return timeSheetService.listTimeSheets(page);
     }
 
+    @GetMapping("get/{id}")
+    public TimeSheetResponseDto get(@PathVariable Long id)
+    {
+        return timeSheetService.getTimeSheetById(id);
+    }
+
     @GetMapping("search")
     public Page<TimeSheetResponseDto> search(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam LocalDate startDate,
@@ -46,7 +50,7 @@ public class TimeSheetController {
 
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody @Valid TimeSheetSaveDto timeSheetSaveDto)
+                                    @Valid @RequestBody  TimeSheetSaveDto timeSheetSaveDto)
     {
         return timeSheetService.updateTimeSheet(id,timeSheetSaveDto);
     }

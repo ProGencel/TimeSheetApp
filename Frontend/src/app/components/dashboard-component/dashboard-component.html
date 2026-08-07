@@ -10,8 +10,6 @@
     <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
   </div>
 
-  <div class="flex-1 overflow-y-auto">
-
     <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
       <div class="overflow-x-auto">
         <table class="table">
@@ -23,24 +21,50 @@
             <th>Description</th>
             <th>Start Time</th>
             <th>End Time</th>
+            <th></th>
           </tr>
           </thead>
 
-          <tbody>
-            @for (sheet of timesheets(); track $index){
-              <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
-                <td>{{sheet.user.username}}</td>
-                <td>{{sheet.date}}</td>
-                <td>{{sheet.description}}</td>
-                <td>{{sheet.startTime}}</td>
-                <td>{{sheet.endTime}}</td>
-              </tr>
-            }
-          </tbody>
+          @if(!isLoading())
+          {
+            <tbody>
+              @for (sheet of timesheets(); track $index){
+                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                  <td>{{sheet.user.username}}</td>
+                  <td>{{sheet.date}}</td>
+                  <td>{{sheet.description}}</td>
+                  <td>{{sheet.startTime}}</td>
+                  <td>{{sheet.endTime}}</td>
+                  <td>
+                    <button
+                      (click)="onUpdate(sheet.id)"
+                      class="btn btn-xs btn-outline btn-primary">
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          }
+          @else
+          {
+            <tbody>
+              @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+                <tr class="border-b border-primary/30/50">
+                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-12 bg-primary/20"></div></td>
+                </tr>
+              }
+            </tbody>
+          }
+
         </table>
 
       </div>
-    </div>
     </div>
 
   <div class="flex justify-center mt-6">
