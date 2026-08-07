@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../models/PageResponse';
 import {environment} from '../../../environments/environment.development';
@@ -32,4 +32,18 @@ export class TimeSheetService {
   {
     return this.http.get<PageResponse<TimeSheet>>(environment.apiUrl+`/timesheet/search?page=` + page + `&startDate=` + startDate + '&endDate=' + endDate);
   }
+
+  exportCsv(startDate?: string | null, endDate?: string | null): Observable<HttpResponse<Blob>> {
+    let url = `${environment.apiUrl}/timesheet/export?format=csv`;
+
+    if (startDate) {
+      url += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+      url += `&endDate=${endDate}`;
+    }
+
+    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  }
+
 }

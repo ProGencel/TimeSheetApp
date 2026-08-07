@@ -123,14 +123,19 @@ public class TimeSheetService {
     public List<TimeSheetResponseDto> searchTimeSheetsForExport(LocalDate startDate, LocalDate endDate)
     {
         Long userId = getCurrentUserId();
-
         Sort sort = Sort.by(Sort.Direction.DESC, "date");
-        List<TimeSheet> timeSheetList = timeSheetRepository.findAllForExport(userId, startDate, endDate, sort);
 
-        List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream()
-                .map((element) -> mapToResponseDto(element))
+        List<TimeSheet> timeSheetList;
+
+        if (startDate == null || endDate == null) {
+            timeSheetList = timeSheetRepository.findByUser_IdEquals(userId, sort);
+        } else {
+            timeSheetList = timeSheetRepository.findAllForExport(userId, startDate, endDate, sort);
+        }
+
+        return timeSheetList.stream()
+                .map(this::mapToResponseDto)
                 .toList();
-        return timeSheetResponseDtoList;
     }
 
     public ResponseEntity<?> updateTimeSheet(Long id,TimeSheetSaveDto timeSheetSaveDto)

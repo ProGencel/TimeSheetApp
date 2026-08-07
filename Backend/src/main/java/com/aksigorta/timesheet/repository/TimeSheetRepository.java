@@ -18,9 +18,8 @@ public interface TimeSheetRepository extends JpaRepository<TimeSheet,Long> {
 
     Page<TimeSheet> findByUserIdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long userId, LocalDate date, LocalDate date1, Pageable pageable);
 
-    @Query("SELECT t FROM timesheets t WHERE t.user.id = :userId " +
-            "AND (:startDate IS NULL OR t.date >= :startDate) " +
-            "AND (:endDate IS NULL OR t.date <= :endDate)")
+   @Query("SELECT t FROM timesheets t WHERE t.user.id = :userId " +
+         "AND t.date >= :startDate AND t.date <= :endDate")
     List<TimeSheet> findAllForExport(@Param("userId")Long userId,
                                      @Param("startDate") LocalDate date,
                                      @Param("endDate") LocalDate date1,

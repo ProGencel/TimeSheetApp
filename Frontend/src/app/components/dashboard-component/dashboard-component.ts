@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {TimeSheetService} from '../../services/timesheet-service/time-sheet-service';
 import {TimeSheet} from '../../models/TimeSheet';
 import {NgClass} from '@angular/common';
@@ -24,9 +24,11 @@ export class DashboardComponent implements OnInit {
   currentPage = signal<number>(0);
   totalPages = signal<number>(0);
   isLoading = signal<boolean>(false);
-  isSearch = signal<boolean>(false);
-  searchStartDate: string | null = null;
-  searchEndDate: string | null = null;
+  startDate: string | null = null;
+  endDate: string | null = null;
+
+  @ViewChild('startDateInput') startDateInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('endDateInput') endDateInput!: ElementRef<HTMLInputElement>;
 
   pageNumbers = computed(() =>  {
     return Array.from({length: this.totalPages() },(_, i) => i);
@@ -40,8 +42,8 @@ export class DashboardComponent implements OnInit {
     this.currentPage.set(page);
     this.isLoading.set(true);
 
-    const request$ = this.searchStartDate && this.searchEndDate
-      ? this.timeSheetService.searchTimeSheets(page, this.searchStartDate, this.searchEndDate)
+    const request$ = this.startDate && this.endDate
+      ? this.timeSheetService.searchTimeSheets(page, this.startDate, this.endDate)
       : this.timeSheetService.getTimeSheets(page);
 
     request$.subscribe(response => {
@@ -56,8 +58,43 @@ export class DashboardComponent implements OnInit {
   }
 
   onSearch(startDate: string, endDate: string) {
-    this.searchStartDate = startDate;
-    this.searchEndDate = endDate;
+    this.startDate = startDate;
+    this.endDate = endDate;
     this.loadPage(0);
+  }
+
+  onClean() {
+    this.startDateInput.nativeElement.value = '';
+    this.endDateInput.nativeElement.value = '';
+    this.startDate = null;
+    this.endDate = null;
+    this.loadPage(0);
+  }
+
+  onCsv() {
+    this.timeSheetService.exportCsv(this.startDate, this.endDate).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'timesheets.csv'; // fallback
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);//İndirme işlemi için bellekte oluşan memory'i silip memory leak i engeller
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
   }
 }
