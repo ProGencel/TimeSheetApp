@@ -1,101 +1,102 @@
-<div class="h-screen flex flex-col p-6 gap-4.5">
-  <div class="self-end pr-10">
-    <button
-      routerLink = '/new'
-      class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
-      Add new timesheet</button>
-  </div>
-  <div class="relative h-1/4 justify-end p-6 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
-    <h1 class="text-3xl font-bold">Timesheets</h1>
-    <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
+<div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-    <div class="absolute left-10 bottom-10 flex flex-row gap-10">
-      <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
-      <button class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
-    </div>
+  <div class="relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+    <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
+      <div class="lg:absolute lg:top-10 lg:right-10 pr-10">
+        <button
+          routerLink = '/new'
+          class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
+          Add new timesheet</button>
+      </div>
+      <h1 class="text-3xl font-bold">Timesheets</h1>
+      <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
 
-    <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)">
-      <div class="absolute bottom-10 right-10">
-        <div class="flex flex-row items-center gap-7.5">
+      <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-10">
+        <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
+        <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
+      </div>
 
-          <span class="whitespace-nowrap">Start Date</span>
-          <input #startDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
-          <span class="whitespace-nowrap">End Date</span>
-          <input #endDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
-          <button type="submit" class="btn btn-circle bg-primary/20 backdrop-blur-2xl border border-primary/30 text-primary-content shadow-sm hover:bg-primary/40">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
-              <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
-            </svg>
-          </button>
+      <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)">
+        <div class="static lg:absolute lg:bottom-10 lg:right-10">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-7.5">
+            <span class="whitespace-nowrap">Start Date</span>
+            <input #startDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+            <span class="whitespace-nowrap">End Date</span>
+            <input #endDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+            <button type="submit" class="btn btn-circle bg-primary/20 backdrop-blur-2xl border border-primary/30 text-primary-content shadow-sm hover:bg-primary/40">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+                <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+              </svg>
+            </button>
+          </div>
         </div>
+      </form>
+
+      <div class="static lg:absolute lg:right-75 lg:bottom-2">
+        <button class="btn btn-ghost btn-sm text-accent-content" (click)="onClean()">Clean</button>
       </div>
-    </form>
-
-    <div class="absolute right-75 bottom-2">
-      <button class="btn btn-ghost btn-sm text-accent-content" (click)="onClean()" >Clean</button>
     </div>
-
   </div>
 
-    <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="table">
+  <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="table">
 
-          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
-          <tr>
-            <th>Username</th>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Edit</th>
-          </tr>
-          </thead>
+        <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+        <tr>
+          <th>Username</th>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Edit</th>
+        </tr>
+        </thead>
 
-          @if(!isLoading())
-          {
-            <tbody>
-              @for (sheet of timesheets(); track $index){
-                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
-                  <td>{{sheet.user.username}}</td>
-                  <td>{{sheet.date}}</td>
-                  <td>{{sheet.description}}</td>
-                  <td>{{sheet.startTime}}</td>
-                  <td>{{sheet.endTime}}</td>
-                  <td>
-                    <button
-                      (click)="onUpdate(sheet.id)"
-                      class="btn btn-xs btn-outline btn-primary">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          }
-          @else
-          {
-            <tbody>
-              @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-                <tr class="border-b border-primary/30/50">
-                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-12 bg-primary/20"></div></td>
-                </tr>
-              }
-            </tbody>
-          }
+        @if(!isLoading())
+        {
+          <tbody>
+            @for (sheet of timesheets(); track $index){
+              <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                <td>{{sheet.user.username}}</td>
+                <td>{{sheet.date}}</td>
+                <td>{{sheet.description}}</td>
+                <td>{{sheet.startTime}}</td>
+                <td>{{sheet.endTime}}</td>
+                <td>
+                  <button
+                    (click)="onUpdate(sheet.id)"
+                    class="btn btn-xs btn-outline btn-primary">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        }
+        @else
+        {
+          <tbody>
+            @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+              <tr class="border-b border-primary/30/50">
+                <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-12 bg-primary/20"></div></td>
+              </tr>
+            }
+          </tbody>
+        }
 
-        </table>
+      </table>
 
-      </div>
     </div>
+  </div>
 
   <div class="flex justify-center mt-6">
-    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden">
+    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap">
       @for(page of pageNumbers(); track $index){
         <button
           class = "join-item btn text-primary-content border-none transition-all duration-300"

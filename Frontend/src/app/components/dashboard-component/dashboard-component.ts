@@ -97,4 +97,31 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+  onExcel() {
+    this.timeSheetService.exportExcel(this.startDate, this.endDate).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'timesheets.xlsx'; // fallback
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url); // İndirme işlemi için bellekte oluşan memory'i silip memory leak'i engeller
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
 }
