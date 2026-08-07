@@ -21,11 +21,15 @@ export class TimeSheetService {
   }
 
   updateTimeSheet(timesheet: TimeSheetSave,id: number): Observable<TimeSheetResponse> {
-    console.log(id);
     return this.http.put<TimeSheetResponse>(`${environment.apiUrl}/timesheet/update/${id}`, timesheet);
   }
 
   getTimeSheetById(id: number): Observable<TimeSheetResponse> {
     return this.http.get<TimeSheetResponse>(`${environment.apiUrl}/timesheet/get/${id}`);
+  }
+
+  searchTimeSheets(page: number,startDate: string, endDate: string): Observable<PageResponse<TimeSheet>>
+  {
+    return this.http.get<PageResponse<TimeSheet>>(environment.apiUrl+`/timesheet/search?page=` + page + `&startDate=` + startDate + '&endDate=' + endDate);
   }
 }

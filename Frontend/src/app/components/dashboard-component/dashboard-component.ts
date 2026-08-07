@@ -4,12 +4,14 @@ import {TimeSheet} from '../../models/TimeSheet';
 import {NgClass} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {environment} from '../../../environments/environment.development';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard-component',
   imports: [
     NgClass,
-    RouterLink
+    RouterLink,
+    FormsModule
   ],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
@@ -22,6 +24,9 @@ export class DashboardComponent implements OnInit {
   currentPage = signal<number>(0);
   totalPages = signal<number>(0);
   isLoading = signal<boolean>(false);
+  isSearch = signal<boolean>(false);
+  searchStartDate: string | null = null;
+  searchEndDate: string | null = null;
 
   pageNumbers = computed(() =>  {
     return Array.from({length: this.totalPages() },(_, i) => i);
@@ -31,25 +36,28 @@ export class DashboardComponent implements OnInit {
     this.loadPage(0);
   }
 
-  loadPage(pageNumber: number): void{
+  loadPage(page: number) {
+    this.currentPage.set(page);
     this.isLoading.set(true);
 
-    this.timeSheetService.getTimeSheets(pageNumber).subscribe({
-      next:(response) => {
-        this.timesheets.set(response.content);
-        this.currentPage.set(response.number);
-        this.totalPages.set(response.totalPages);
-        this.isLoading.set(false);
-      },
-      error:(error) => {
-        console.log(error);
-        this.isLoading.set(false);
-      }
-    })
+    const request$ = this.searchStartDate && this.searchEndDate
+      ? this.timeSheetService.searchTimeSheets(page, this.searchStartDate, this.searchEndDate)
+      : this.timeSheetService.getTimeSheets(page);
+
+    request$.subscribe(response => {
+      this.timesheets.set(response.content);
+      this.totalPages.set(response.totalPages);
+      this.isLoading.set(false);
+    });
   }
 
   onUpdate(id: number): void {
     void this.router.navigate(['/timesheet/update',id]);
   }
 
+  onSearch(startDate: string, endDate: string) {
+    this.searchStartDate = startDate;
+    this.searchEndDate = endDate;
+    this.loadPage(0);
+  }
 }

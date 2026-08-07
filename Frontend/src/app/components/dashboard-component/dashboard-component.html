@@ -5,9 +5,27 @@
       class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
       Add new timesheet</button>
   </div>
-  <div class="relative h-1/4 flex flex-col justify-end p-6 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="relative h-1/4 justify-end p-6 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
     <h1 class="text-3xl font-bold">Timesheets</h1>
     <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
+
+    <form #searchForm (ngSubmit)="onSearch(startDate.value, endDate.value)">
+      <div class="absolute bottom-0 right-0 p-10">
+        <div class="flex flex-row items-center gap-7.5">
+
+          <span class="whitespace-nowrap">Start Date</span>
+          <input #startDate type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+          <span class="whitespace-nowrap">End Date</span>
+          <input #endDate type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+          <button type="submit" class="btn btn-circle bg-primary/20 backdrop-blur-2xl border border-primary/30 text-primary-content shadow-sm hover:bg-primary/40">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+              <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </form>
+
   </div>
 
     <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
@@ -21,7 +39,7 @@
             <th>Description</th>
             <th>Start Time</th>
             <th>End Time</th>
-            <th></th>
+            <th>Edit</th>
           </tr>
           </thead>
 
