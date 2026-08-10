@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jspecify.annotations.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +32,6 @@ public class AdminService {
 
     private final TimeSheetRepository timeSheetRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final ModelMapper modelMapper = new ModelMapper();
 
     public Page<UserResponseDto> searchUser(int page, String q)
@@ -47,21 +47,33 @@ public class AdminService {
 
     public ResponseEntity<?> searchTimeSheet(int page, Long userId, LocalDate localDate)
     {
-        Sort sort = Sort.by(Sort.Direction.DESC,"date");
-        Pageable pageable = PageRequest.of(page,10,sort);
+        Sort sort = Sort.by(Sort.Direction.DESC, "date");
+        Pageable pageable = PageRequest.of(page, 10, sort);
 
         Page<TimeSheet> timeSheetPage;
 
-        if (localDate != null) {
+        if (userId != null && localDate != null) {
             timeSheetPage = timeSheetRepository.findByUser_IdEqualsAndDateEquals(userId, localDate, pageable);
-        } else {
+        } else if (userId != null) {
             timeSheetPage = timeSheetRepository.findByUser_IdEquals(userId, pageable);
+        } else if (localDate != null) {
+            timeSheetPage = timeSheetRepository.findByDateEquals(localDate, pageable);
+        } else {
+            timeSheetPage = timeSheetRepository.findAll(pageable);
         }
 
         Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
 
         return ResponseEntity.ok().body(timeSheetResponseDtoPage);
+    }
 
+    public Page<TimeSheetResponseDto> listTimeSheets(int page)
+    {
+        Sort sort = Sort.by(Sort.Direction.DESC,"date");
+        Pageable pageable = PageRequest.of(page,10,sort);
+        Page<TimeSheet> timeSheetPage = timeSheetRepository.findAll(pageable);
+
+        return getTimeSheetResponseDtos(timeSheetPage);
     }
 
     public byte[] toCsv(List<?> dataList)
@@ -280,6 +292,15 @@ public class AdminService {
     private String sanitizeSheetName(String name) {
         String cleaned = name.replaceAll("[\\\\/?*\\[\\]:]", "_");
         return cleaned.length() > 31 ? cleaned.substring(0, 31) : cleaned;
+    }
+
+    @NonNull
+    private Page<TimeSheetResponseDto> getTimeSheetResponseDtos(Page<TimeSheet> timeSheetPage) {
+        Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> {
+            TimeSheetResponseDto dto = modelMapper.map(element, TimeSheetResponseDto.class);
+            return dto;
+        });
+        return timeSheetResponseDtoPage;
     }
 
 }

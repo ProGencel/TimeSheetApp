@@ -21,6 +21,12 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    @GetMapping("list")
+    public Page<TimeSheetResponseDto> listTimeSheets(@RequestParam(defaultValue = "0") int page)
+    {
+        return adminService.listTimeSheets(page);
+    }
+
     @GetMapping("search_user")
     public Page<UserResponseDto> searchUser(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "") String q)
@@ -28,8 +34,8 @@ public class AdminController {
         return adminService.searchUser(page,q);
     }
 
-    @GetMapping("search_timesheets/{userId}")
-    public ResponseEntity<?> searchTimeSheets(@PathVariable Long userId,
+    @GetMapping({"search_timesheets/{userId}","search_timesheets"})
+    public ResponseEntity<?> searchTimeSheets(@PathVariable(required = false) Long userId,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(required = false) LocalDate localDate)
     {
