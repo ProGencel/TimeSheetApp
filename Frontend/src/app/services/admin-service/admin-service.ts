@@ -46,11 +46,11 @@ export class AdminService {
     let url = '';
     if(q)
     {
-      url = `${environment.apiUrl}/admin/export?inputFormat=user&exportFormat=csv`;
+      url = `${environment.apiUrl}/admin/export?exportFormat=csv&q=${q}&inputFormat=user`;
     }
     else
     {
-      url = `${environment.apiUrl}/admin/export?inputFormat=userq=${q}&exportFormat=csv`;
+      url = `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=user`;
     }
 
 
@@ -61,11 +61,41 @@ export class AdminService {
     let url = '';
     if(q)
     {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=user`;
+      url = `${environment.apiUrl}/admin/export?exportFormat=excel&q=${q}&inputFormat=user`;
     }
     else
     {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&q=${q}&inputFormat=user`;
+      url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=user`;
+    }
+
+    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  }
+
+  exportCsvTimesheet(date: string | null):Observable<HttpResponse<Blob>>
+  {
+    let url = '';
+    if(date)
+    {
+      url = `${environment.apiUrl}/admin/export?exportFormat=csv&localDate=${date}&inputFormat=timesheet`;
+    }
+    else
+    {
+      url = `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=timesheet`;
+    }
+
+    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  }
+
+  exportExcelTimesheet(date: string | null):Observable<HttpResponse<Blob>>
+  {
+    let url = '';
+    if(date)
+    {
+      url = `${environment.apiUrl}/admin/export?exportFormat=excel&localDate=${date}&inputFormat=timesheet`;
+    }
+    else
+    {
+      url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=timesheet`;
     }
 
     return this.http.get(url, { responseType: 'blob', observe: 'response'});

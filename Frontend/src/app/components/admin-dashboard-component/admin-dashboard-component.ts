@@ -175,6 +175,62 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  onCsvTimeSheet() { /* yeni */ }
-  onExcelTimeSheet() { /* yeni */ }
+  onCsvTimeSheet() {
+    this.adminService.exportCsvTimesheet(this.date).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'timesheets.csv'; // fallback
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+
+        window.URL.revokeObjectURL(url); // Memory leak'i engellemek için bellekte oluşan URL'yi sil
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  onExcelTimeSheet() {
+    this.adminService.exportExcelTimesheet(this.date).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'timesheets.xlsx'; // fallback
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+
+        window.URL.revokeObjectURL(url); // Memory leak'i engellemek için bellekte oluşan URL'yi sil
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
 }
