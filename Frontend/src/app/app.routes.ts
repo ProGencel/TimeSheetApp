@@ -5,6 +5,7 @@ import {Mainlayout} from './components/mainlayout/mainlayout';
 import {DashboardComponent} from './components/dashboard-component/dashboard-component';
 import {NewTimesheetComponent} from './components/new-timesheet-component/new-timesheet-component';
 import {UpdateTimesheetComponent} from './components/update-timesheet-component/update-timesheet-component';
+import {AdminDashboardComponent} from './components/admin-dashboard-component/admin-dashboard-component';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'login',pathMatch: 'full'},
@@ -22,6 +23,9 @@ export const routes: Routes = [
       },
       {
         path: 'timesheet/update/:id', component: UpdateTimesheetComponent
+      },
+      {
+        path: 'admin-panel', component: AdminDashboardComponent
       }
     ]
   }

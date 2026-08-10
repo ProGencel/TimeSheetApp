@@ -1,0 +1,145 @@
+<div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
+
+  <div class="relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+    <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
+      <h1 class="text-3xl font-bold">Timesheets</h1>
+
+      <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-3">
+        <button (click)="onCsvUser()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Users</button>
+        <button (click)="onExcelUser()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Users</button>
+        <button (click)="onCsvTimeSheet()" class="btn btn-soft btn-accent bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Timesheets</button>
+        <button (click)="onExcelTimeSheet()" class="btn btn-soft btn-warning bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Timesheets</button>
+      </div>
+
+      <div class="static lg:absolute lg:right-5 lg:top-5 flex flex-col items-end gap-3">
+
+        <form #generalSearchForm (ngSubmit)="onSearchUser(searchInput.value)">
+          <div class="join">
+            <label class="input bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm join-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+                <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+              </svg>
+              <input #searchInput type="search" class="grow" placeholder="Search" />
+            </label>
+            <button type="submit" class="btn bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70 join-item">
+              Search
+            </button>
+          </div>
+        </form>
+
+        <form #searchForm (ngSubmit)="onSearchTimeSheets(dateInput.value)" class="flex items-center gap-2">
+          <input
+            #dateInput
+            type="date"
+            required
+            class="input validator bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm"
+          />
+          <button
+            type="submit"
+            class="btn btn-circle btn-sm bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+              <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+            </svg>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm text-primary-content/70 hover:text-primary-content" (click)="onClean()">
+            Clean
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="table">
+
+        @if (viewMode() === 'timesheet') {
+          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+          <tr>
+            <th>Username</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+          </tr>
+          </thead>
+
+          @if (!isLoading()) {
+            <tbody>
+              @for (sheet of timesheets(); track $index) {
+                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                  <td>{{ sheet.user?.username }}</td>
+                  <td>{{ sheet.date }}</td>
+                  <td>{{ sheet.description }}</td>
+                  <td>{{ sheet.startTime }}</td>
+                  <td>{{ sheet.endTime }}</td>
+                </tr>
+              }
+            </tbody>
+          } @else {
+            <tbody>
+              @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+                <tr class="border-b border-primary/30/50">
+                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                </tr>
+              }
+            </tbody>
+          }
+        } @else {
+          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
+          </thead>
+
+          @if (!isLoading()) {
+            <tbody>
+              @for (user of users(); track $index) {
+                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role }}</td>
+                </tr>
+              }
+            </tbody>
+          } @else {
+            <tbody>
+              @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+                <tr class="border-b border-primary/30/50">
+                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-40 bg-primary/20"></div></td>
+                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
+                </tr>
+              }
+            </tbody>
+          }
+        }
+
+      </table>
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-6">
+    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap">
+      @for (page of pageNumbers(); track $index) {
+        @if (page === '...') {
+          <button class="join-item btn btn-disabled bg-primary/5 border-none">...</button>
+        } @else {
+          <button
+            class="join-item btn text-primary-content border-none transition-all duration-300"
+            [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-white' : 'bg-primary/10 hover:bg-primary/30'"
+            (click)="loadPage(page)"
+          >{{ page + 1 }}</button>
+        }
+      }
+    </div>
+  </div>
+</div>

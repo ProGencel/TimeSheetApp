@@ -31,13 +31,23 @@ export class LoginComponent {
 
     this.authService.login(request).subscribe({
       next:(response) => {
-        void this.router.navigate(['/dashboard']);
+        if(this.isAdmin())
+        {
+          void this.router.navigate(['/admin-panel']);
+        }
+        else
+        {
+          void this.router.navigate(['/dashboard']);
+        }
       },
       error:(err) => {
         console.log("Error",err);
         this.errorMessage.set(err.error?.message || 'Invalid username or password.');
       }
     });
+  }
 
+  isAdmin(): boolean {
+    return true;
   }
 }

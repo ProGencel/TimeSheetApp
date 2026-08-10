@@ -46,4 +46,17 @@ export class TimeSheetService {
     return this.http.get(url, { responseType: 'blob', observe: 'response'});
   }
 
+  exportExcel(startDate?: string | null, endDate?: string | null): Observable<HttpResponse<Blob>> {
+    let url = `${environment.apiUrl}/timesheet/export?format=excel`;
+
+    if (startDate) {
+      url += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+      url += `&endDate=${endDate}`;
+    }
+
+    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  }
+
 }
