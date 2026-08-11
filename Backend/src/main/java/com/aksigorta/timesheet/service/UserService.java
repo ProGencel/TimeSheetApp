@@ -5,6 +5,7 @@ import com.aksigorta.timesheet.model.user.UserLoginDto;
 import com.aksigorta.timesheet.model.user.UserRegisterDto;
 import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.UserRepository;
+import com.aksigorta.timesheet.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final ModelMapper modelMapper = new ModelMapper();
 
     public ResponseEntity<?> register(UserRegisterDto userRegisterDto)
@@ -52,6 +54,10 @@ public class UserService {
             boolean isPasswordMatch = BCrypt.checkpw(userLoginDto.getPassword(), user.getPassword());
             if(isPasswordMatch)
             {
+                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+                String token = jwtService.generateToken(customUserDetails);
+                responseBody.put("token",token);
+
                 UserResponseDto userResponseDto = modelMapper.map(user,UserResponseDto.class);
 
                 responseBody.put("user", userResponseDto);

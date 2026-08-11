@@ -2,7 +2,7 @@
 
   <div class="relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
-      <div class="lg:absolute lg:top-10 lg:right-10 pr-10">
+      <div class="lg:absolute lg:top-5 lg:right-30 pr-10">
         <button
           routerLink = '/new'
           class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
@@ -14,6 +14,14 @@
       <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-10">
         <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
         <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
+      </div>
+
+      <div class="absolute right-5 top-5">
+        <button (click)="logout()" class="btn bg-neutral/50 backdrop-blur-3xl rounded-box border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+          </svg>
+        </button>
       </div>
 
       <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)">

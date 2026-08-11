@@ -7,6 +7,7 @@ import com.aksigorta.timesheet.model.user.User;
 import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
+import com.aksigorta.timesheet.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -40,12 +43,13 @@ public class TimeSheetService {
 
     public Long getCurrentUserId()
     {
-        return 89L;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return userDetails.getUserId();
     }
 
     public ResponseEntity<?> save(TimeSheetSaveDto timeSheetSaveDto)
     {
-        // TODO: add JWT authentication
         Long userId = getCurrentUserId();
 
         Optional<User> userOptional = userRepository.findById(userId);
@@ -82,7 +86,6 @@ public class TimeSheetService {
 
     public Page<TimeSheetResponseDto> listTimeSheets(int page)
     {
-        // TODO: add JWT authentication
         Long userid = getCurrentUserId();
 
         Sort sort = Sort.by(Sort.Direction.DESC,"date");
@@ -109,7 +112,6 @@ public class TimeSheetService {
 
     public Page<TimeSheetResponseDto> searchTimeSheets(int page, LocalDate startDate, LocalDate endDate)
     {
-        // TODO: add JWT authentication
         Long userId = getCurrentUserId();
 
         Sort sort = Sort.by(Sort.Direction.DESC,"date");

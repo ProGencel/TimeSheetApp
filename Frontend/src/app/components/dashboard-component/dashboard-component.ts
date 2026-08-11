@@ -5,6 +5,7 @@ import {NgClass} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {environment} from '../../../environments/environment.development';
 import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../services/auth-service/auth-service';
 
 @Component({
   selector: 'app-dashboard-component',
@@ -19,6 +20,7 @@ import {FormsModule} from '@angular/forms';
 export class DashboardComponent implements OnInit {
   private timeSheetService = inject(TimeSheetService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   timesheets = signal<TimeSheet[]>([]);
   currentPage = signal<number>(0);
@@ -55,6 +57,12 @@ export class DashboardComponent implements OnInit {
 
   onUpdate(id: number): void {
     void this.router.navigate(['/timesheet/update',id]);
+  }
+
+  logout()
+  {
+    this.authService.logout()
+    void this.router.navigate(['/login']);
   }
 
   onSearch(startDate: string, endDate: string) {

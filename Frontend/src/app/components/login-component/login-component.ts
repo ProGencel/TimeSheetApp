@@ -31,6 +31,11 @@ export class LoginComponent {
 
     this.authService.login(request).subscribe({
       next:(response) => {
+
+        let token : string = response.token;
+        localStorage.setItem('token', token);
+        localStorage.setItem('role',response.user.role);
+
         if(this.isAdmin())
         {
           void this.router.navigate(['/admin-panel']);
@@ -48,6 +53,15 @@ export class LoginComponent {
   }
 
   isAdmin(): boolean {
-    return true;
+    let role: string | null = localStorage.getItem('role');
+
+    if(role === "ADMIN")
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 }

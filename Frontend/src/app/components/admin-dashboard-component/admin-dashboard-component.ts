@@ -1,12 +1,13 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {AdminService} from '../../services/admin-service/admin-service';
 import {TimeSheet} from '../../models/TimeSheet';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../models/PageResponse';
 import {NgClass} from '@angular/common';
 import {UserResponse} from '../../models/UserResponse';
+import {AuthService} from '../../services/auth-service/auth-service';
 
 @Component({
   selector: 'app-admin-dashboard-component',
@@ -19,6 +20,8 @@ import {UserResponse} from '../../models/UserResponse';
 })
 export class AdminDashboardComponent implements OnInit {
   private adminService = inject(AdminService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   private date: string | null = null;
   private q: string | null = null;
 
@@ -117,6 +120,12 @@ export class AdminDashboardComponent implements OnInit {
   {
     this.q = q;
     this.loadPage(0);
+  }
+
+  logout()
+  {
+    this.authService.logout()
+    void this.router.navigate(['/login']);
   }
 
   onCsvUser()
