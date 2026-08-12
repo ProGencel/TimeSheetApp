@@ -63,6 +63,20 @@ public class ProjectService {
         return projectResponseDtoPage;
     }
 
+    public ResponseEntity<?> get(Long id)
+    {
+        Optional<Project> projectOptional = projectRepository.findById(id);
+
+        if(projectOptional.isEmpty())
+        {
+            return ResponseEntity.badRequest().body(Map.of("Success",false,"Error Message:","Project cannot find"));
+        }
+        else
+        {
+            return ResponseEntity.ok().body(projectOptional.get());
+        }
+    }
+
     private Page<ProjectResponseDto> getProjectResponsePage(Page<Project> projectPage)
     {
         Page<ProjectResponseDto> projectResponseDtoPage = projectPage.

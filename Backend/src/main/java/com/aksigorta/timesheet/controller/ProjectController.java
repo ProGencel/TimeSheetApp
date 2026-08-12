@@ -28,4 +28,10 @@ public class ProjectController {
     {
         return projectService.searchProject(q,page);
     }
+
+    @GetMapping("get/{id}")
+    public ResponseEntity<?> get(@PathVariable Long id)
+    {
+        return projectService.get(id);
+    }
 }
