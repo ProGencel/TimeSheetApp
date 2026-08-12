@@ -209,16 +209,17 @@ public class TimeSheetService {
 
         String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUser().getUsername();
 
-        sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+        sb.append("User,").append(escapeCsv(username)).append("\n");
 
-        sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
+        sb.append("Date,Start,End,Description\n");
 
         for(TimeSheetResponseDto t : timeSheetList)
         {
             sb.append(t.getDate()).append(",")
                     .append(t.getStartTime()).append(",")
                     .append(t.getEndTime()).append(",")
-                    .append(escapeCsv(t.getDescription()))
+                    .append(escapeCsv(t.getDescription())).append(",")
+                    .append(escapeCsv(t.getProject()))
                     .append("\n");
         }
         return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -233,11 +234,11 @@ public class TimeSheetService {
 
             String username = timeSheetList.isEmpty() ? "" : timeSheetList.get(0).getUser().getUsername();
             Row userRow = sheet.createRow(0);
-            userRow.createCell(0).setCellValue("Kullanıcı");
+            userRow.createCell(0).setCellValue("User");
             userRow.createCell(1).setCellValue(username);
 
             Row header = sheet.createRow(1);
-            String[] columns = {"Tarih","Başlangıç","Bitiş","Açıklama"};
+            String[] columns = {"Date","Start","End","Description"};
             for(int i = 0;i<columns.length;i++)
             {
                 header.createCell(i).setCellValue(columns[i]);
@@ -250,6 +251,7 @@ public class TimeSheetService {
                 row.createCell(1).setCellValue(t.getStartTime().toString());
                 row.createCell(2).setCellValue(t.getEndTime().toString());
                 row.createCell(3).setCellValue(t.getDescription());
+                row.createCell(4).setCellValue(t.getProject());
             }
 
             for(int i = 0;i<columns.length;i++)

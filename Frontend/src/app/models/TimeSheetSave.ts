@@ -3,4 +3,5 @@ export interface TimeSheetSave {
   startTime: string;
   endTime: string;
   description: string;
+  project: string;
 }

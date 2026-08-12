@@ -6,6 +6,7 @@ export interface TimeSheetResponse {
   description: string;
 
   date: string;
+  project: string;
 
   user: UserResponse;
 }

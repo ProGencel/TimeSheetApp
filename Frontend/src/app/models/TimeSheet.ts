@@ -7,6 +7,7 @@ export interface TimeSheet {
   endTime: string;
   description: string;
   date: string;
+  project: string;
 
   user: UserResponse;
 }

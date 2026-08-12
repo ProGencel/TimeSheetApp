@@ -22,4 +22,5 @@ public class TimeSheetSaveDto{
     LocalTime endTime;
     @Size
     String description;
+    String project;
 }

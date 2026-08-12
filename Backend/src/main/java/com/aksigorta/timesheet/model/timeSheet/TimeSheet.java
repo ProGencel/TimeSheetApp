@@ -33,4 +33,6 @@ public class TimeSheet {
     @ManyToOne
     private User user;
 
+    private String project;
+
 }

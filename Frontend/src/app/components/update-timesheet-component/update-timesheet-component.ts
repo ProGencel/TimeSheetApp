@@ -25,7 +25,8 @@ export class UpdateTimesheetComponent implements OnInit {
       date: ['', Validators.required],
       startTime: ['',Validators.required],
       endTime: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      project: [''],
     });
   }
 
@@ -45,7 +46,6 @@ export class UpdateTimesheetComponent implements OnInit {
 
   onSubmit() {
 
-    console.log(this.formGroup.value + "AAAAAA");
     if(this.formGroup.valid) {
       this.timeSheetService.updateTimeSheet(this.formGroup.value,this.id).subscribe({
         next: (response) => {

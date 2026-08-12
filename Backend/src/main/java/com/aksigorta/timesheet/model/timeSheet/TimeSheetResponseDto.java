@@ -23,4 +23,6 @@ public class TimeSheetResponseDto {
     LocalDate date;
 
     UserResponseDto user;
+
+    String project;
 }

@@ -87,6 +87,7 @@
           <th>Description</th>
           <th>Start Time</th>
           <th>End Time</th>
+          <th>Project</th>
           <th>Edit</th>
         </tr>
         </thead>
@@ -101,6 +102,7 @@
                 <td>{{sheet.description}}</td>
                 <td>{{sheet.startTime}}</td>
                 <td>{{sheet.endTime}}</td>
+                <td>{{sheet.project}}</td>
                 <td>
                   <button
                     (click)="onUpdate(sheet.id)"
@@ -120,6 +122,7 @@
                 <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
                 <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
                 <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
                 <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
                 <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
                 <td><div class="skeleton h-4 w-12 bg-primary/20"></div></td>

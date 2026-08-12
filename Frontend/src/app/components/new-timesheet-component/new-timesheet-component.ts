@@ -25,7 +25,8 @@ export class NewTimesheetComponent {
       date: ['', Validators.required],
       startTime: ['',Validators.required],
       endTime: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      project: '',
     });
   }
 

@@ -96,13 +96,13 @@ public class AdminService {
 
             if (singleUser && timeSheetList.get(0).getUser() != null) {
                 String username = timeSheetList.get(0).getUser().getUsername();
-                sb.append("Kullanıcı,").append(escapeCsv(username)).append("\n");
+                sb.append("User,").append(escapeCsv(username)).append("\n");
             }
 
             if (singleUser) {
-                sb.append("Tarih,Başlangıç,Bitiş,Açıklama\n");
+                sb.append("Date,Start,End,Description,Project\n");
             } else {
-                sb.append("Kullanıcı,Tarih,Başlangıç,Bitiş,Açıklama\n");
+                sb.append("User,Date,Start,End,Description,Project\n");
             }
 
             for(TimeSheetResponseDto t : timeSheetList)
@@ -114,7 +114,8 @@ public class AdminService {
                 sb.append(t.getDate()).append(",")
                         .append(t.getStartTime()).append(",")
                         .append(t.getEndTime()).append(",")
-                        .append(escapeCsv(t.getDescription()))
+                        .append(escapeCsv(t.getDescription())).append(",")
+                        .append(escapeCsv(t.getProject()))
                         .append("\n");
             }
             return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -171,14 +172,14 @@ public class AdminService {
 
                 if (singleUser && timeSheetResponseDtoList.get(0).getUser() != null) {
                     Row userRow = sheet.createRow(rowIdx++);
-                    userRow.createCell(0).setCellValue("Kullanıcı");
+                    userRow.createCell(0).setCellValue("User");
                     userRow.createCell(1).setCellValue(timeSheetResponseDtoList.get(0).getUser().getUsername());
                 }
 
                 Row header = sheet.createRow(rowIdx++);
                 String[] columns = singleUser
-                        ? new String[]{"Tarih","Başlangıç","Bitiş","Açıklama"}
-                        : new String[]{"Kullanıcı","Tarih","Başlangıç","Bitiş","Açıklama"};
+                        ? new String[]{"Date","Start","End","Description","Project"}
+                        : new String[]{"User","Date","Start","End","Description","Project"};
                 for(int i = 0; i < columns.length; i++)
                 {
                     header.createCell(i).setCellValue(columns[i]);
@@ -195,7 +196,8 @@ public class AdminService {
                     row.createCell(col++).setCellValue(t.getDate().toString());
                     row.createCell(col++).setCellValue(t.getStartTime().toString());
                     row.createCell(col++).setCellValue(t.getEndTime().toString());
-                    row.createCell(col).setCellValue(t.getDescription());
+                    row.createCell(col++).setCellValue(t.getDescription());
+                    row.createCell(col++).setCellValue(t.getProject());
                 }
 
                 for(int i = 0; i < columns.length; i++)
@@ -214,7 +216,7 @@ public class AdminService {
                 Sheet sheet = workbook.createSheet("users");
 
                 Row header = sheet.createRow(0);
-                String[] columns = {"ID","Kullanıcı","Email","Rol"};
+                String[] columns = {"ID","User","Email","Role","Project"};
                 for(int i = 0;i< columns.length;i++)
                 {
                     header.createCell(i).setCellValue(columns[i]);
