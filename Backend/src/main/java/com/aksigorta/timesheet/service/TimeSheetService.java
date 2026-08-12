@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -178,6 +180,27 @@ public class TimeSheetService {
             return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","This timesheet does not belongs to you"));
         }
         return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","Please try again with present timesheet"));
+    }
+
+    public Long getWeeklyWorkHours()
+    {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        List<TimeSheet> timeSheetList = timeSheetRepository.
+                findByUser_IdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(getCurrentUserId(),startOfWeek,endOfWeek);
+
+        Duration totalDuration = Duration.ZERO;
+
+        for(TimeSheet timeSheet : timeSheetList)
+        {
+            Duration duration = Duration.between(timeSheet.getStartTime(),timeSheet.getEndTime());
+            totalDuration = totalDuration.plus(duration);
+        }
+
+        return totalDuration.toMinutes();
+
     }
 
     public byte[] toCsv(List<TimeSheetResponseDto> timeSheetList)

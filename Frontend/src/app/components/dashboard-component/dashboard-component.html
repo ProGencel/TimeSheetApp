@@ -21,6 +21,28 @@
         </button>
       </div>
 
+      <div class="static lg:absolute lg:inset-0 lg:m-auto lg:w-fit lg:h-fit ">
+        @if (isLoading()) {
+          <span class="loading loading-ring loading-xl"></span>
+        } @else {
+          <div class="stat">
+            <div class="stat-figure text-warning">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+
+            </div>
+            <div class="flex flex-row gap-0.5">
+              <div class="stat-value text-success">{{workedHours}}h</div>
+              @if (workedMinutes) {
+                <div class="stat-value text-success">{{workedMinutes}}m</div>
+              }
+            </div>
+            <div class="stat-title text-warning">Time Worked This Week</div>
+          </div>
+        }
+      </div>
+
       <div class="static lg:absolute lg:left-6 lg:bottom-6 flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
         <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
         <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>

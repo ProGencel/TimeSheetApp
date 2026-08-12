@@ -28,6 +28,9 @@ export class DashboardComponent implements OnInit {
   isLoading = signal<boolean>(false);
   startDate: string | null = null;
   endDate: string | null = null;
+  totalWorkedMinutes: number = 0;
+  workedHours: number = 0;
+  workedMinutes: number = 0;
 
   @ViewChild('startDateInput') startDateInput!: ElementRef<HTMLInputElement>;
   @ViewChild('endDateInput') endDateInput!: ElementRef<HTMLInputElement>;
@@ -51,7 +54,7 @@ export class DashboardComponent implements OnInit {
     request$.subscribe(response => {
       this.timesheets.set(response.content);
       this.totalPages.set(response.totalPages);
-      this.isLoading.set(false);
+      this.updateWorkedDuration();
     });
   }
 
@@ -129,6 +132,20 @@ export class DashboardComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
+      }
+    });
+  }
+
+  updateWorkedDuration()
+  {
+    this.timeSheetService.getMinutes().subscribe({
+      next: (response) => {
+        this.totalWorkedMinutes = response.valueOf();
+        this.workedMinutes = this.totalWorkedMinutes % 60;
+        this.workedHours = Math.floor(this.totalWorkedMinutes / 60);
+        console.log(this.totalWorkedMinutes + this.workedHours + this.workedMinutes);
+
+        this.isLoading.set(false);
       }
     });
   }

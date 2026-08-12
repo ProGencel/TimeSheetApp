@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -84,6 +85,12 @@ public class TimeSheetController {
                 .contentType(mediaType)
                 .body(fileContent);
 
+    }
+
+    @GetMapping("get_duration")
+    public Long getDuration()
+    {
+        return timeSheetService.getWeeklyWorkHours();
     }
 
 }

@@ -59,4 +59,9 @@ export class TimeSheetService {
     return this.http.get(url, { responseType: 'blob', observe: 'response'});
   }
 
+  getMinutes(): Observable<number>
+  {
+    return this.http.get<number>(`${environment.apiUrl}/timesheet/get_duration`);
+  }
+
 }

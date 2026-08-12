@@ -35,6 +35,7 @@ public interface TimeSheetRepository extends JpaRepository<TimeSheet,Long> {
 
     Page<TimeSheet> findByDateEquals(LocalDate localDate, Pageable pageable);
 
+    List<TimeSheet> findByUser_IdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long id, LocalDate date, LocalDate date1);
 
 
 }
