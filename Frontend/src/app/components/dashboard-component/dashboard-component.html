@@ -1,48 +1,56 @@
 <div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-  <div class="relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="relative h-auto lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
-      <div class="lg:absolute lg:top-5 lg:right-30 pr-10">
+
+      <div>
+        <h1 class="text-3xl font-bold">Timesheets</h1>
+        <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
+      </div>
+
+      <div class="static lg:absolute lg:right-6 lg:top-6 flex items-center gap-3 mt-4 lg:mt-0">
         <button
-          routerLink = '/new'
-          class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
-          Add new timesheet</button>
-      </div>
-      <h1 class="text-3xl font-bold">Timesheets</h1>
-      <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
-
-      <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-10">
-        <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
-        <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
-      </div>
-
-      <div class="absolute right-5 top-5">
-        <button (click)="logout()" class="btn bg-neutral/50 backdrop-blur-3xl rounded-box border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70">
+          routerLink="/new"
+          class="btn bg-neutral/50 text-neutral-content border-primary/25 backdrop-blur-3xl hover:bg-neutral/70">
+          Add new timesheet
+        </button>
+        <button (click)="logout()" class="btn btn-square bg-neutral/50 backdrop-blur-3xl rounded-box border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
           </svg>
         </button>
       </div>
 
-      <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)">
-        <div class="static lg:absolute lg:bottom-10 lg:right-10">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-7.5">
-            <span class="whitespace-nowrap">Start Date</span>
+      <div class="static lg:absolute lg:left-6 lg:bottom-6 flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
+        <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
+        <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
+      </div>
+
+      <div class="static lg:absolute lg:right-6 lg:bottom-6 mt-4 lg:mt-0">
+        <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)" class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+
+          <div class="flex items-center gap-2">
+            <span class="whitespace-nowrap font-medium opacity-80">Start:</span>
             <input #startDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
-            <span class="whitespace-nowrap">End Date</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="whitespace-nowrap font-medium opacity-80">End:</span>
             <input #endDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+          </div>
+
+          <div class="flex items-center gap-2">
             <button type="submit" class="btn btn-circle bg-primary/20 backdrop-blur-2xl border border-primary/30 text-primary-content shadow-sm hover:bg-primary/40">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
                 <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
               </svg>
             </button>
+            <button type="button" class="btn btn-ghost bg-primary/50 border-primary/50 text-accent-content" (click)="onClean()">Clean</button>
           </div>
-        </div>
-      </form>
 
-      <div class="static lg:absolute lg:right-75 lg:bottom-2">
-        <button class="btn btn-ghost btn-sm text-accent-content" (click)="onClean()">Clean</button>
+        </form>
       </div>
+
     </div>
   </div>
 
@@ -66,7 +74,7 @@
           <tbody>
             @for (sheet of timesheets(); track $index){
               <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
-                <td>{{sheet.user.username}}</td>
+                <td class="mix-blend-difference">{{sheet.user.username}}</td>
                 <td>{{sheet.date}}</td>
                 <td>{{sheet.description}}</td>
                 <td>{{sheet.startTime}}</td>
@@ -74,7 +82,7 @@
                 <td>
                   <button
                     (click)="onUpdate(sheet.id)"
-                    class="btn btn-xs btn-outline btn-primary">
+                    class="btn btn-xs btn-outline btn-success">
                     Edit
                   </button>
                 </td>

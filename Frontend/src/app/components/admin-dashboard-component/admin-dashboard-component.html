@@ -1,14 +1,19 @@
 <div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-  <div class="relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="z-10 relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
       <h1 class="text-3xl font-bold">Timesheets</h1>
 
       <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-3">
-        <button (click)="onCsvUser()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Users</button>
-        <button (click)="onExcelUser()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Users</button>
-        <button (click)="onCsvTimeSheet()" class="btn btn-soft btn-accent bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Timesheets</button>
-        <button (click)="onExcelTimeSheet()" class="btn btn-soft btn-warning bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Timesheets</button>
+        <div class="dropdown dropdown-right dropdown-center">
+          <div tabindex="0" role="button" class="btn btn-secondary m-1">Export</div>
+          <ul tabindex="-1" class="dropdown-content menu bg-accent-content/55 rounded-box z-1 w-52 p-2 shadow-2xl gap-6">
+            <li><button (click)="onCsvUser()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Users</button></li>
+            <li><button (click)="onExcelUser()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Users</button></li>
+            <li><button (click)="onCsvTimeSheet()" class="btn btn-soft btn-accent bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Timesheets</button></li>
+            <li><button (click)="onExcelTimeSheet()" class="btn btn-soft btn-warning bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Timesheets</button></li>
+          </ul>
+        </div>
       </div>
 
       <div class="absolute right-5 top-5">
@@ -19,7 +24,7 @@
         </button>
       </div>
 
-      <div class="static lg:absolute lg:right-5 lg:bottom-5 flex flex-col items-end gap-3">
+      <div class="static lg:absolute lg:right-5 lg:bottom-5 flex flex-col lg:flex-row items-center gap-6">
 
         <form #generalSearchForm (ngSubmit)="onSearchUser(searchInput.value)">
           <div class="join">
@@ -27,7 +32,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
                 <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
               </svg>
-              <input #searchInput type="search" class="grow" placeholder="Search" />
+              <input #searchInput type="search" class="grow" placeholder="Search Users" />
             </label>
             <button type="submit" class="btn bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70 join-item">
               Search
