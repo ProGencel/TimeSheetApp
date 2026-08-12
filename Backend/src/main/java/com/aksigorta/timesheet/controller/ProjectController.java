@@ -1,14 +1,13 @@
 package com.aksigorta.timesheet.controller;
 
+import com.aksigorta.timesheet.model.project.ProjectResponseDto;
 import com.aksigorta.timesheet.model.project.ProjectSaveDto;
 import com.aksigorta.timesheet.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,4 +22,10 @@ public class ProjectController {
         return projectService.saveProject(projectSaveDto);
     }
 
+    @GetMapping("search")
+    public Page<ProjectResponseDto> search(@RequestParam(defaultValue = "") String q,
+                                           @RequestParam(defaultValue = "0") int page)
+    {
+        return projectService.searchProject(q,page);
+    }
 }

@@ -9,6 +9,9 @@ import com.aksigorta.timesheet.repository.UserRepository;
 import com.aksigorta.timesheet.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +52,23 @@ public class ProjectService {
 
             return ResponseEntity.ok().body(Map.of("Success",true));
         }
+    }
+
+    public Page<ProjectResponseDto> searchProject(String q,int page)
+    {
+        Pageable pageable = PageRequest.of(page,10);
+        Page<Project> projectPage = projectRepository.findByNameContains(q,pageable);
+        Page<ProjectResponseDto> projectResponseDtoPage = getProjectResponsePage(projectPage);
+
+        return projectResponseDtoPage;
+    }
+
+    private Page<ProjectResponseDto> getProjectResponsePage(Page<Project> projectPage)
+    {
+        Page<ProjectResponseDto> projectResponseDtoPage = projectPage.
+                map((element) -> modelMapper.map(element, ProjectResponseDto.class));
+
+        return projectResponseDtoPage;
     }
 
 }
