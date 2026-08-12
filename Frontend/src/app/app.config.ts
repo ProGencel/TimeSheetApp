@@ -3,14 +3,15 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/http';
-import {jwtInterceptors} from './jwt.interceptor';
+import {jwtInterceptors} from './interceptors/jwt.interceptor';
+import {ngrokInterceptor} from './interceptors/ngrok.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([jwtInterceptors])
+      withInterceptors([jwtInterceptors,ngrokInterceptor])
     ),
   ]
 };
