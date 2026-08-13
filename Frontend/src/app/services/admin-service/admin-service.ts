@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../models/PageResponse';
-import {TimeSheet} from '../../models/TimeSheet';
+import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {environment} from '../../../environments/environment.development';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 

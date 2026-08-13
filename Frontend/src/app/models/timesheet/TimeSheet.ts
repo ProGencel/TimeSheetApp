@@ -1,4 +1,5 @@
-import {UserResponse} from './UserResponse';
+import {UserResponse} from '../user/UserResponse';
+import {Project} from '../project/Project';
 
 export interface TimeSheet {
   id: number;
@@ -7,7 +8,7 @@ export interface TimeSheet {
   endTime: string;
   description: string;
   date: string;
-  project: string;
+  project: Project;
 
   user: UserResponse;
 }

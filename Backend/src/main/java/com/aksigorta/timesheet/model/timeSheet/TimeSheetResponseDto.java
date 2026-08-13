@@ -1,5 +1,6 @@
 package com.aksigorta.timesheet.model.timeSheet;
 
+import com.aksigorta.timesheet.model.project.Project;
 import com.aksigorta.timesheet.model.user.UserResponseDto;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
@@ -24,5 +25,5 @@ public class TimeSheetResponseDto {
 
     UserResponseDto user;
 
-    String project;
+    Project project;
 }

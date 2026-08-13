@@ -1,8 +1,10 @@
 package com.aksigorta.timesheet.model.timeSheet;
 
+import com.aksigorta.timesheet.model.project.Project;
 import com.aksigorta.timesheet.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ public class TimeSheet {
     @ManyToOne
     private User user;
 
-    private String project;
+    @ManyToOne
+    private Project project;
 
 }

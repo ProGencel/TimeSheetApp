@@ -219,7 +219,7 @@ public class TimeSheetService {
                     .append(t.getStartTime()).append(",")
                     .append(t.getEndTime()).append(",")
                     .append(escapeCsv(t.getDescription())).append(",")
-                    .append(escapeCsv(t.getProject()))
+                    .append(escapeCsv(t.getProject().getName()))
                     .append("\n");
         }
         return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -251,7 +251,7 @@ public class TimeSheetService {
                 row.createCell(1).setCellValue(t.getStartTime().toString());
                 row.createCell(2).setCellValue(t.getEndTime().toString());
                 row.createCell(3).setCellValue(t.getDescription());
-                row.createCell(4).setCellValue(t.getProject());
+                row.createCell(4).setCellValue(t.getProject().getName());
             }
 
             for(int i = 0;i<columns.length;i++)

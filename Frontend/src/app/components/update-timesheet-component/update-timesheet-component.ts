@@ -32,7 +32,8 @@ export class UpdateTimesheetComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.id = Number(params['id']);this.timeSheetService.getTimeSheetById(this.id).subscribe({
+      this.id = Number(params['id']);
+      this.timeSheetService.getTimeSheetById(this.id).subscribe({
         next: (response) => {
           this.formGroup.patchValue(response);
         },

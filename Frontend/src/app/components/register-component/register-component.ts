@@ -1,7 +1,7 @@
 import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../../services/auth-service/auth-service';
 import {Router, RouterLink} from '@angular/router';
-import {RegisterRequest} from '../../models/Register';
+import {RegisterRequest} from '../../models/user/Register';
 import {FormsModule, NgForm} from '@angular/forms';
 import {NgClass} from '@angular/common';
 

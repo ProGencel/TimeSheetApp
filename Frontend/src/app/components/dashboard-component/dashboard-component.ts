@@ -1,36 +1,40 @@
 import {Component, computed, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {TimeSheetService} from '../../services/timesheet-service/time-sheet-service';
-import {TimeSheet} from '../../models/TimeSheet';
+import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {NgClass} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
-import {environment} from '../../../environments/environment.development';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../services/auth-service/auth-service';
+import {ProjectCardComponent} from '../project-card-component/project-card-component';
 
 @Component({
   selector: 'app-dashboard-component',
   imports: [
     NgClass,
     RouterLink,
-    FormsModule
+    FormsModule,
+    ProjectCardComponent
   ],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })
 export class DashboardComponent implements OnInit {
-  private timeSheetService = inject(TimeSheetService);
   private router = inject(Router);
+  private timeSheetService = inject(TimeSheetService);
   private authService = inject(AuthService);
 
   timesheets = signal<TimeSheet[]>([]);
   currentPage = signal<number>(0);
   totalPages = signal<number>(0);
   isLoading = signal<boolean>(false);
+
   startDate: string | null = null;
   endDate: string | null = null;
   totalWorkedMinutes: number = 0;
   workedHours: number = 0;
   workedMinutes: number = 0;
+  isModalOpen = false;
+  selectedProjectId: number | null = null;
 
   @ViewChild('startDateInput') startDateInput!: ElementRef<HTMLInputElement>;
   @ViewChild('endDateInput') endDateInput!: ElementRef<HTMLInputElement>;
@@ -148,5 +152,16 @@ export class DashboardComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+  onClickProject(id: number): void
+  {
+    this.selectedProjectId = id;
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.selectedProjectId = null;
   }
 }

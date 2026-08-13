@@ -3,9 +3,9 @@ import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../models/PageResponse';
 import {environment} from '../../../environments/environment.development';
-import {TimeSheetSave} from '../../models/TimeSheetSave';
-import {TimeSheet} from '../../models/TimeSheet';
-import {TimeSheetResponse} from '../../models/TimeSheetResponse';
+import {TimeSheetSave} from '../../models/timesheet/TimeSheetSave';
+import {TimeSheet} from '../../models/timesheet/TimeSheet';
+import {TimeSheetResponse} from '../../models/timesheet/TimeSheetResponse';
 @Injectable({
   providedIn: 'root',
 })

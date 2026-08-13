@@ -1,0 +1,50 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" (click)="onClose()">
+  <div class="card bg-primary/55 border border-primary/30 border-t-4 border-t-primary text-base-content shadow-2xl rounded-box w-full max-w-md"
+       (click)="$event.stopPropagation()">
+    <div class="card-body p-6 gap-4 relative">
+
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+        <h2 class="text-xl font-bold leading-tight tracking-tight pr-6">{{ name() }}</h2>
+
+        <button
+          class="btn btn-ghost btn-xs btn-circle absolute right-0 top-0"
+          (click)="onClose()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        @if (isFinished()) {
+          <span class="badge badge-success gap-1 font-medium shrink-0 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Completed
+          </span>
+        } @else {
+          <span class="badge badge-primary gap-1 font-medium shrink-0 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            In Progress
+          </span>
+        }
+      </div>
+
+      <p class="text-sm opacity-70 line-clamp-2 leading-relaxed">{{ description() }}</p>
+
+      <div class="divider my-0 opacity-20"></div>
+
+      <div class="flex items-center gap-2 text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span class="opacity-60">Owner:</span>
+        <span class="font-medium">{{ username() }}</span>
+      </div>
+
+    </div>
+  </div>
+</div>

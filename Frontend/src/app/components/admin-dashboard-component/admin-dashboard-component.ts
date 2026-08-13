@@ -2,11 +2,11 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {AdminService} from '../../services/admin-service/admin-service';
-import {TimeSheet} from '../../models/TimeSheet';
+import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../models/PageResponse';
 import {NgClass} from '@angular/common';
-import {UserResponse} from '../../models/UserResponse';
+import {UserResponse} from '../../models/user/UserResponse';
 import {AuthService} from '../../services/auth-service/auth-service';
 
 @Component({

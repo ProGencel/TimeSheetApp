@@ -115,7 +115,7 @@ public class AdminService {
                         .append(t.getStartTime()).append(",")
                         .append(t.getEndTime()).append(",")
                         .append(escapeCsv(t.getDescription())).append(",")
-                        .append(escapeCsv(t.getProject()))
+                        .append(escapeCsv(t.getProject().getName()))
                         .append("\n");
             }
             return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -197,7 +197,7 @@ public class AdminService {
                     row.createCell(col++).setCellValue(t.getStartTime().toString());
                     row.createCell(col++).setCellValue(t.getEndTime().toString());
                     row.createCell(col++).setCellValue(t.getDescription());
-                    row.createCell(col++).setCellValue(t.getProject());
+                    row.createCell(col++).setCellValue(t.getProject().getName());
                 }
 
                 for(int i = 0; i < columns.length; i++)
