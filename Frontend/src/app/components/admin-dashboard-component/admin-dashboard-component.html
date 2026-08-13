@@ -89,7 +89,12 @@
                   <td>{{ sheet.description }}</td>
                   <td>{{ sheet.startTime }}</td>
                   <td>{{ sheet.endTime }}</td>
-                  <td>{{ sheet.project}}</td>
+                  <td>
+                    <button
+                      (click)="onClickProject(sheet.project.id)"
+                      class="btn btn-ghost hover:bg-accent/50 text-primary-content hover:border-primary">{{sheet.project.name}}
+                    </button>
+                  </td>
                 </tr>
               }
             </tbody>
@@ -159,3 +164,10 @@
     </div>
   </div>
 </div>
+
+@if (isModalOpen) {
+  <app-project-card-component
+    [projectId]="selectedProjectId!"
+    (close)="closeModal()">
+  </app-project-card-component>
+}

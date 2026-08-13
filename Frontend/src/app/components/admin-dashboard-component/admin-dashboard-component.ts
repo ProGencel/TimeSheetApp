@@ -8,12 +8,14 @@ import {PageResponse} from '../../models/PageResponse';
 import {NgClass} from '@angular/common';
 import {UserResponse} from '../../models/user/UserResponse';
 import {AuthService} from '../../services/auth-service/auth-service';
+import {ProjectCardComponent} from '../project-card-component/project-card-component';
 
 @Component({
   selector: 'app-admin-dashboard-component',
   imports: [
     FormsModule,
-    NgClass
+    NgClass,
+    ProjectCardComponent
   ],
   templateUrl: './admin-dashboard-component.html',
   styleUrl: './admin-dashboard-component.css',
@@ -24,6 +26,8 @@ export class AdminDashboardComponent implements OnInit {
   private router = inject(Router);
   private date: string | null = null;
   private q: string | null = null;
+  protected isModalOpen = false;
+  protected selectedProjectId: number | null = null;
 
 
   timesheets = signal<TimeSheet[]>([]);
@@ -240,6 +244,17 @@ export class AdminDashboardComponent implements OnInit {
         console.log(error);
       }
     });
+  }
+
+  onClickProject(id: number): void
+  {
+    this.selectedProjectId = id;
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.selectedProjectId = null;
   }
 
 }
