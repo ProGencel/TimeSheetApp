@@ -6,6 +6,7 @@ import {Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../services/auth-service/auth-service';
 import {ProjectCardComponent} from '../project-card-component/project-card-component';
+import {NewProjectComponent} from '../new-project-component/new-project-component';
 
 @Component({
   selector: 'app-dashboard-component',
@@ -13,7 +14,8 @@ import {ProjectCardComponent} from '../project-card-component/project-card-compo
     NgClass,
     RouterLink,
     FormsModule,
-    ProjectCardComponent
+    ProjectCardComponent,
+    NewProjectComponent
   ],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
@@ -35,6 +37,7 @@ export class DashboardComponent implements OnInit {
   workedMinutes: number = 0;
   isModalOpen = false;
   selectedProjectId: number | null = null;
+  isNewProjectModalOpen: boolean = false;
 
   @ViewChild('startDateInput') startDateInput!: ElementRef<HTMLInputElement>;
   @ViewChild('endDateInput') endDateInput!: ElementRef<HTMLInputElement>;
@@ -162,6 +165,12 @@ export class DashboardComponent implements OnInit {
 
   closeModal(): void {
     this.isModalOpen = false;
+    this.isNewProjectModalOpen = false;
     this.selectedProjectId = null;
+  }
+
+  onClickNewProject(): void
+  {
+    this.isNewProjectModalOpen = true;
   }
 }

@@ -10,6 +10,11 @@
 
       <div class="static lg:absolute lg:right-6 lg:top-6 flex items-center gap-3 mt-4 lg:mt-0">
         <button
+          (click)="onClickNewProject()"
+          class="btn bg-neutral/50 text-neutral-content border-primary/25 backdrop-blur-3xl hover:bg-neutral/70">
+          Add new project
+        </button>
+        <button
           routerLink="/new"
           class="btn bg-neutral/50 text-neutral-content border-primary/25 backdrop-blur-3xl hover:bg-neutral/70">
           Add new timesheet
@@ -159,4 +164,10 @@
     [projectId]="selectedProjectId!"
     (close)="closeModal()">
   </app-project-card-component>
+}
+
+@if (isNewProjectModalOpen) {
+  <app-new-project-component
+    (closeNew)="closeModal()">
+  </app-new-project-component>
 }
