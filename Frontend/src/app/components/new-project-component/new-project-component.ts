@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Output, signal} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ProjectService} from '../../services/project-service/project-service';
 
@@ -13,6 +13,8 @@ import {ProjectService} from '../../services/project-service/project-service';
 })
 export class NewProjectComponent {
   @Output() closeNew = new EventEmitter<void>();
+
+  errorMessage = signal<string>('');
 
   formGroup: FormGroup;
 
@@ -29,9 +31,13 @@ export class NewProjectComponent {
   onSubmit() {
     this.projectService.saveProject(this.formGroup.value).subscribe({
       next: () => {
-        console.log("Bla bla");
+        this.onClose();
+      },
+      error: (error) => {
+        this.errorMessage.set(error.error?.message || "Please try with different information");
+        console.log(error);
       }
-    })
+    });
   }
 
   onClose(): void

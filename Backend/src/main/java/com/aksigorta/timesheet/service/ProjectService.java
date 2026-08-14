@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -77,6 +78,36 @@ public class ProjectService {
         }
     }
 
+    public boolean isOwner(Long projectId)
+    {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        if(projectOptional.isPresent())
+        {
+            return Objects.equals(projectOptional.get().getUser().getId(), getCurrentUserId());
+        }
+        return false;
+    }
+
+    public ResponseEntity<?> setFinished(Long projectId)
+    {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        if(projectOptional.isPresent())
+        {
+            if(isOwner(projectId))
+            {
+                Project project = projectOptional.get();
+                project.setFinished(true);
+                projectRepository.save(project);
+                return ResponseEntity.ok().body(Map.of("Success", true));
+            }
+            else
+            {
+                return ResponseEntity.badRequest().body(Map.of("Success",false,"Error Message:","You cannot check a project that is not belong to you"));
+            }
+        }
+        return ResponseEntity.badRequest().body(Map.of("Success",false,"Error Message:","Project cannot find"));
+    }
+
     private Page<ProjectResponseDto> getProjectResponsePage(Page<Project> projectPage)
     {
         Page<ProjectResponseDto> projectResponseDtoPage = projectPage.
@@ -84,5 +115,4 @@ public class ProjectService {
 
         return projectResponseDtoPage;
     }
-
 }

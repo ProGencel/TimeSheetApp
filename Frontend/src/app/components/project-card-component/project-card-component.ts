@@ -15,6 +15,8 @@ export class ProjectCardComponent implements OnChanges {
   protected description = signal<string>('');
   protected username = signal<string>('');
   protected isFinished = signal<boolean>(false);
+  protected isOwner = signal<boolean>(false);
+  protected isChecked = signal<boolean>(false);
 
   private projectService = inject(ProjectService);
 
@@ -23,13 +25,41 @@ export class ProjectCardComponent implements OnChanges {
       this.name.set(project.name);
       this.description.set(project.description);
       this.username.set(project.user.username);
-      this.isFinished.set(project.isFinished);
+      this.isFinished.set(project.finished);
+      this.isOwnerFunc();
     });
   }
 
   onClose(): void
   {
+    this.setFinished();
     this.close.emit();
+  }
+
+  isOwnerFunc(): void
+  {
+    this.projectService.isOwner(this.projectId).subscribe(result => {
+      this.isOwner.set(result);
+    });
+  }
+
+  setFinished(): void {
+    if(this.isChecked())
+    {
+      this.projectService.setFinished(this.projectId).subscribe(result => {
+        console.log(result);
+      });
+    }
+  }
+
+  onCheckbox(event: Event): void
+  {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.isChecked.set(true);
+    } else {
+      this.isChecked.set(false);
+    }
   }
 
 }

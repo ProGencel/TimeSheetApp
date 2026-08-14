@@ -5,5 +5,5 @@ export interface Project {
   name: string;
   description: string;
   user: UserResponse;
-  isFinished: boolean;
+  finished: boolean;
 }

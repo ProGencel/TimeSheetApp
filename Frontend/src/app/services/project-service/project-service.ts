@@ -21,4 +21,14 @@ export class ProjectService {
     return this.http.post<ProjectResponse>(environment.apiUrl+'/project/save', projectSave);
   }
 
+  isOwner(id: number): Observable<boolean>
+  {
+    return this.http.get<boolean>(environment.apiUrl+'/project/isOwner/'+id);
+  }
+
+  setFinished(id: number): Observable<any>
+  {
+    return this.http.put(environment.apiUrl+`/project/set_finished/${id}`, id);
+  }
+
 }

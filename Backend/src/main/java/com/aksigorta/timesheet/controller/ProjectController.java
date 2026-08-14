@@ -34,4 +34,16 @@ public class ProjectController {
     {
         return projectService.get(id);
     }
+
+    @GetMapping("isOwner/{id}")
+    public boolean isOwner(@PathVariable Long id)
+    {
+        return projectService.isOwner(id);
+    }
+
+    @PutMapping("set_finished/{id}")
+    public ResponseEntity<?> setFinished(@PathVariable Long id)
+    {
+        return projectService.setFinished(id);
+    }
 }

@@ -43,6 +43,14 @@
         </svg>
         <span class="opacity-60">Owner:</span>
         <span class="font-medium">{{ username() }}</span>
+
+        @if(isOwner() && !isFinished())
+        {
+          <div class="ml-auto flex flex-row gap-3">
+            <input type="checkbox" class="checkbox" (change)="onCheckbox($event)" />
+            <p>Set As Finished</p>
+          </div>
+        }
       </div>
 
     </div>
