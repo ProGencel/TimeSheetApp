@@ -10,6 +10,7 @@ import com.aksigorta.timesheet.repository.ProjectRepository;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
 import com.aksigorta.timesheet.security.CustomUserDetails;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -78,8 +79,16 @@ public class TimeSheetService {
                     return ResponseEntity.badRequest().body(errorMap);
                 }
             }
-            TimeSheet timeSheet = modelMapper.map(timeSheetSaveDto,TimeSheet.class);
+            TimeSheet timeSheet = modelMapper.map(timeSheetSaveDto, TimeSheet.class);
+            timeSheet.setId(null);
             timeSheet.setUser(userOptional.get());
+
+            if (timeSheetSaveDto.getProjectId() != null) {
+                Project project = projectRepository.findById(timeSheetSaveDto.getProjectId())
+                        .orElseThrow(() -> new EntityNotFoundException("Project not found: " + timeSheetSaveDto.getProjectId()));
+                timeSheet.setProject(project);
+            }
+
             timeSheetRepository.save(timeSheet);
 
             TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
@@ -153,6 +162,11 @@ public class TimeSheetService {
 
         if(userOptional.isPresent() && timeSheetOptional.isPresent())
         {
+            if(timeSheetOptional.get().getProject().isFinished())
+            {
+                Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please select a in progress project");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
             if(timeSheetSaveDto.getEndTime().isBefore(timeSheetSaveDto.getStartTime()))
             {
                 Map<String,Object> errorMap = Map.of("Success",false,"Error Message:","Please enter a valid time");

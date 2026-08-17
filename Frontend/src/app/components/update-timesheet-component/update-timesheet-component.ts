@@ -48,7 +48,8 @@ export class UpdateTimesheetComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(q => {
       this.projectService.searchProject(q, 0).subscribe({
-        next: (response) => this.projects.set(response.content),
+        next: (response) => this.projects.set(
+          response.content.filter(project => !project.finished)),
         error: (error) => console.log(error)
       });
     });
