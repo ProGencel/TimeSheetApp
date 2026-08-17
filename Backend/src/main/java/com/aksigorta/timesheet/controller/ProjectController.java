@@ -1,5 +1,6 @@
 package com.aksigorta.timesheet.controller;
 
+import com.aksigorta.timesheet.model.project.Project;
 import com.aksigorta.timesheet.model.project.ProjectResponseDto;
 import com.aksigorta.timesheet.model.project.ProjectSaveDto;
 import com.aksigorta.timesheet.service.ProjectService;
@@ -23,8 +24,8 @@ public class ProjectController {
     }
 
     @GetMapping("search")
-    public Page<ProjectResponseDto> search(@RequestParam(defaultValue = "") String q,
-                                           @RequestParam(defaultValue = "0") int page)
+    public Page<Project> search(@RequestParam(defaultValue = "") String q,
+                                @RequestParam(defaultValue = "0") int page)
     {
         return projectService.searchProject(q,page);
     }

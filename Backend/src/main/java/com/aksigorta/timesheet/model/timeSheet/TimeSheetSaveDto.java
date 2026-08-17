@@ -1,6 +1,5 @@
 package com.aksigorta.timesheet.model.timeSheet;
 
-import com.aksigorta.timesheet.model.project.Project;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -23,5 +22,5 @@ public class TimeSheetSaveDto{
     LocalTime endTime;
     @Size
     String description;
-    Project project;
+    Long projectId;
 }

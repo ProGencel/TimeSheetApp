@@ -12,5 +12,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findByName(String name);
 
-    Page<Project> findByNameContains(String name, Pageable pageable);
+    Page<Project> findByNameContainsIgnoreCase(String name,
+                                               Pageable pageable);
 }

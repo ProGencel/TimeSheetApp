@@ -1,10 +1,12 @@
 package com.aksigorta.timesheet.service;
 
+import com.aksigorta.timesheet.model.project.Project;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheet;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetSaveDto;
 import com.aksigorta.timesheet.model.user.User;
 import com.aksigorta.timesheet.model.user.UserResponseDto;
+import com.aksigorta.timesheet.repository.ProjectRepository;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
 import com.aksigorta.timesheet.security.CustomUserDetails;
@@ -42,6 +44,7 @@ public class TimeSheetService {
     private final TimeSheetRepository timeSheetRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper = new ModelMapper();
+    private final ProjectRepository projectRepository;
 
     public Long getCurrentUserId()
     {
@@ -172,14 +175,20 @@ public class TimeSheetService {
             if(timeSheet.getUser().getId().equals(user_id))
             {
                 TimeSheetResponseDto timeSheetResponseDto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
-                modelMapper.map(timeSheetSaveDto,timeSheet);
+                updateTimeSheetFields(timeSheet, timeSheetSaveDto);
                 timeSheet.setId(id);
-                timeSheetRepository.save(timeSheet);
-                return ResponseEntity.ok().body(timeSheetResponseDto);
+                Optional<Project> projectOptional = projectRepository.findById(timeSheetSaveDto.getProjectId());
+                if(projectOptional.isPresent())
+                {
+                    Project project = projectOptional.get();
+                    timeSheet.setProject(project);
+                    timeSheetRepository.save(timeSheet);
+                    return ResponseEntity.ok().body(timeSheetResponseDto);
+                }
             }
             return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","This timesheet does not belongs to you"));
         }
-        return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","Please try again with present timesheet"));
+        return ResponseEntity.badRequest().body(Map.of("Success: ",false,"Error Message: ","Please try again with present timesheet or project"));
     }
 
     public Long getWeeklyWorkHours()
@@ -289,6 +298,14 @@ public class TimeSheetService {
     private TimeSheetResponseDto mapToResponseDto(TimeSheet timeSheet) {
         TimeSheetResponseDto dto = modelMapper.map(timeSheet, TimeSheetResponseDto.class);
         return dto;
+    }
+
+    private void updateTimeSheetFields(TimeSheet timeSheet, TimeSheetSaveDto dto)
+    {
+        timeSheet.setDate(dto.getDate());
+        timeSheet.setStartTime(dto.getStartTime());
+        timeSheet.setEndTime(dto.getEndTime());
+        timeSheet.setDescription(dto.getDescription());
     }
 
 }

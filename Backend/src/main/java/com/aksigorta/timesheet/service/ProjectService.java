@@ -55,13 +55,12 @@ public class ProjectService {
         }
     }
 
-    public Page<ProjectResponseDto> searchProject(String q,int page)
+    public Page<Project> searchProject(String q,int page)
     {
         Pageable pageable = PageRequest.of(page,10);
-        Page<Project> projectPage = projectRepository.findByNameContains(q,pageable);
-        Page<ProjectResponseDto> projectResponseDtoPage = getProjectResponsePage(projectPage);
+        Page<Project> projectPage = projectRepository.findByNameContainsIgnoreCase(q,pageable);
 
-        return projectResponseDtoPage;
+        return projectPage;
     }
 
     public ResponseEntity<?> get(Long id)

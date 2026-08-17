@@ -56,12 +56,30 @@
       </div>
 
       <div class="form-control flex flex-row items-center gap-4 mt-4">
-        <label class="label w-1/4 justify-start p-0" for="description">
+        <label class="label w-1/4 justify-start p-0" for="project">
           <span class="label-text">Project</span>
         </label>
-        <input formControlName="project"
-               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
-        />
+        <div class="dropdown w-3/4">
+          <input
+            #projectInput
+            tabindex="0"
+            type="text"
+            placeholder="Search for projects"
+            class="input input-bordered w-full bg-black/20 backdrop-blur-2xl"
+            (input)="onSearch($event)"
+
+          />
+          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
+            @for (project of projects(); track project.id) {
+              <li>
+                <a (click)="onSelectProject(project)">{{ project.name }}</a>
+              </li>
+            }
+            @empty {
+              <li><a class="opacity-50">Results not found</a></li>
+            }
+          </ul>
+        </div>
       </div>
 
       <div class="form-control mt-6">

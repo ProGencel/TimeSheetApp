@@ -4,6 +4,8 @@ import {ProjectResponse} from '../../models/project/ProjectResponse';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment.development';
 import {ProjectSave} from '../../models/project/ProjectSave';
+import { PageResponse } from "../../models/PageResponse";
+import {Project} from '../../models/project/Project';
 
 @Injectable({
   providedIn: 'root',
@@ -31,4 +33,8 @@ export class ProjectService {
     return this.http.put(environment.apiUrl+`/project/set_finished/${id}`, id);
   }
 
+  searchProject(q: string, page: number): Observable<PageResponse<Project>>
+  {
+    return this.http.get<PageResponse<Project>>(environment.apiUrl+`/project/search?q=${q}&page=${page}`);
+  }
 }
