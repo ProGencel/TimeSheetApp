@@ -1,8 +1,24 @@
 <div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-  <div class="z-10 relative h-60 lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="z-10 relative min-h-fit lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
       <h1 class="text-3xl font-bold">Timesheets</h1>
+
+      <!-- Stats artık normal akışta, absolute değil -->
+      <div class="flex flex-col items-center gap-1.5 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:pointer-events-none">
+        <h2 class="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-primary-content/60">
+          Most Worked Projects
+        </h2>
+        <div class="flex gap-2 sm:gap-3 overflow-x-auto max-w-full px-1 pb-1 lg:pointer-events-auto lg:overflow-visible">
+          @for (project of topThreeProjectsFormatted(); track project.projectId) {
+            <div class="shrink-0 bg-neutral/40 backdrop-blur-xl border border-primary/20 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-center min-w-[90px] sm:min-w-[110px] max-w-[130px] sm:max-w-[150px]">
+              <div class="text-xs sm:text-sm font-bold truncate">{{ project.projectName }}</div>
+              <div class="text-[10px] sm:text-xs opacity-70">{{ project.hours }}h {{project.remainingMinutes}}m </div>
+            </div>
+          }
+        </div>
+      </div>
+
 
       <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-3">
         <div class="dropdown dropdown-right dropdown-center">

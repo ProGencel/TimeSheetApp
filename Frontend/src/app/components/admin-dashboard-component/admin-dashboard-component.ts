@@ -9,6 +9,7 @@ import {NgClass} from '@angular/common';
 import {UserResponse} from '../../models/user/UserResponse';
 import {AuthService} from '../../services/auth-service/auth-service';
 import {ProjectCardComponent} from '../project-card-component/project-card-component';
+import {ProjectDurationDto} from '../../models/project/ProjectDuration';
 
 @Component({
   selector: 'app-admin-dashboard-component',
@@ -26,6 +27,7 @@ export class AdminDashboardComponent implements OnInit {
   private router = inject(Router);
   private date: string | null = null;
   private q: string | null = null;
+
   protected isModalOpen = false;
   protected selectedProjectId: number | null = null;
 
@@ -36,6 +38,7 @@ export class AdminDashboardComponent implements OnInit {
   isLoading = signal<boolean>(false);
   users = signal<UserResponse[]>([]);
   viewMode = signal<'timesheet' | 'user'>('timesheet');
+  topThreeProjects = signal<ProjectDurationDto[]>([]);
 
 
   ngOnInit(): void {
@@ -79,7 +82,20 @@ export class AdminDashboardComponent implements OnInit {
         }
       }
     });
+    this.adminService.getTopThree().subscribe({
+    next: (response: any) => {
+      this.topThreeProjects.set(response);
+    }
+  })
   }
+
+  topThreeProjectsFormatted = computed(() =>
+    this.topThreeProjects().map(project => ({
+      ...project,
+      hours: Math.floor(project.minutes / 60),
+      remainingMinutes: project.minutes % 60,
+    }))
+  );
 
   onSearchTimeSheets(date: string)
   {

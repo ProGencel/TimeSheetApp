@@ -1,5 +1,7 @@
 package com.aksigorta.timesheet.service;
 
+import com.aksigorta.timesheet.model.project.Project;
+import com.aksigorta.timesheet.model.project.ProjectDurationDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheet;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.user.User;
@@ -23,8 +25,12 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +80,30 @@ public class AdminService {
         Page<TimeSheet> timeSheetPage = timeSheetRepository.findAll(pageable);
 
         return getTimeSheetResponseDtos(timeSheetPage);
+    }
+
+    public List<ProjectDurationDto> getTopThreeProjects() {
+        List<TimeSheet> allTimeSheets = timeSheetRepository.findAll();
+        Map<Project, Long> projectsAndDurations = new HashMap<>();
+
+        for (TimeSheet timeSheet : allTimeSheets) {
+            Project project = timeSheet.getProject();
+            if (project == null) {
+                continue;
+            }
+            Long minutes = Duration.between(timeSheet.getStartTime(), timeSheet.getEndTime()).toMinutes();
+            projectsAndDurations.merge(project, minutes, Long::sum);
+        }
+
+        return projectsAndDurations.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(3)
+                .map(e -> new ProjectDurationDto(
+                        e.getKey().getId(),
+                        e.getKey().getName(),
+                        e.getValue()
+                ))
+                .toList();
     }
 
     public byte[] toCsv(List<?> dataList)

@@ -107,11 +107,4 @@ public class ProjectService {
         return ResponseEntity.badRequest().body(Map.of("Success",false,"Error Message:","Project cannot find"));
     }
 
-    private Page<ProjectResponseDto> getProjectResponsePage(Page<Project> projectPage)
-    {
-        Page<ProjectResponseDto> projectResponseDtoPage = projectPage.
-                map((element) -> modelMapper.map(element, ProjectResponseDto.class));
-
-        return projectResponseDtoPage;
-    }
 }

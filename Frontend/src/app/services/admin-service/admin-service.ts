@@ -4,6 +4,7 @@ import {PageResponse} from '../../models/PageResponse';
 import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {environment} from '../../../environments/environment.development';
 import {HttpClient, HttpResponse} from '@angular/common/http';
+import {ProjectDurationDto} from '../../models/project/ProjectDuration';
 
 @Injectable({
   providedIn: 'root',
@@ -99,5 +100,10 @@ export class AdminService {
     }
 
     return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  }
+
+  getTopThree(): Observable<ProjectDurationDto[]>
+  {
+    return this.http.get<ProjectDurationDto[]>(environment.apiUrl+'/admin/get_top_three');
   }
 }

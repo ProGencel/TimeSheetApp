@@ -1,5 +1,7 @@
 package com.aksigorta.timesheet.controller;
 
+import com.aksigorta.timesheet.model.project.Project;
+import com.aksigorta.timesheet.model.project.ProjectDurationDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.service.AdminService;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +43,12 @@ public class AdminController {
                                               @RequestParam(required = false) LocalDate localDate)
     {
         return adminService.searchTimeSheet(page,userId,localDate);
+    }
+
+    @GetMapping("get_top_three")
+    public List<ProjectDurationDto> getTopThree()
+    {
+        return adminService.getTopThreeProjects();
     }
 
     @GetMapping({"export","export/{userId}"})
