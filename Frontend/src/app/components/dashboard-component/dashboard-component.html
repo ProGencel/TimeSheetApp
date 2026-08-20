@@ -1,25 +1,25 @@
 <div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-  <div class="relative h-auto lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="relative h-auto lg:h-56 bg-base-300/60 backdrop-blur-2xl rounded-box border border-primary/20 text-base-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
 
       <div>
-        <h1 class="text-3xl font-bold">Timesheets</h1>
-        <p class="opacity-80 mt-2">Your daily and weekly working hours are shown below.</p>
+        <h1 class="text-3xl font-bold text-base-content">Timesheets</h1>
+        <p class="opacity-70 mt-2 text-base-content">Your daily and weekly working hours are shown below.</p>
       </div>
 
       <div class="static lg:absolute lg:right-6 lg:top-6 flex items-center gap-3 mt-4 lg:mt-0">
         <button
           (click)="onClickNewProject()"
-          class="btn bg-neutral/50 text-neutral-content border-primary/25 backdrop-blur-3xl hover:bg-neutral/70">
+          class="btn bg-base-100/70 text-base-content border-primary/25 backdrop-blur-3xl hover:bg-base-100/90">
           Add new project
         </button>
         <button
           routerLink="/new"
-          class="btn bg-neutral/50 text-neutral-content border-primary/25 backdrop-blur-3xl hover:bg-neutral/70">
+          class="btn bg-base-100/70 text-base-content border-primary/25 backdrop-blur-3xl hover:bg-base-100/90">
           Add new timesheet
         </button>
-        <button (click)="logout()" class="btn btn-square bg-neutral/50 backdrop-blur-3xl rounded-box border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70">
+        <button (click)="logout()" class="btn btn-square bg-base-100/70 backdrop-blur-3xl rounded-box border border-primary/25 text-base-content shadow-sm hover:bg-base-100/90">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
           </svg>
@@ -28,51 +28,51 @@
 
       <div class="static lg:absolute lg:inset-0 lg:m-auto lg:w-fit lg:h-fit ">
         @if (isLoading()) {
-          <span class="loading loading-ring loading-xl"></span>
+          <span class="loading loading-ring loading-xl text-primary"></span>
         } @else {
-          <div class="stat">
-            <div class="stat-figure text-warning">
+          <div class="stat bg-base-100/50 backdrop-blur-xl rounded-box px-6 py-4">
+            <div class="stat-figure text-info">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
 
             </div>
             <div class="flex flex-row gap-0.5">
-              <div class="stat-value text-success">{{workedHours}}h</div>
+              <div class="stat-value text-base-content">{{workedHours}}h</div>
               @if (workedMinutes) {
-                <div class="stat-value text-success">{{workedMinutes}}m</div>
+                <div class="stat-value text-base-content">{{workedMinutes}}m</div>
               }
             </div>
-            <div class="stat-title text-warning">Time Worked This Week</div>
+            <div class="stat-title text-info">Time Worked This Week</div>
           </div>
         }
       </div>
 
       <div class="static lg:absolute lg:left-6 lg:bottom-6 flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
-        <button (click)="onCsv()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv</button>
-        <button (click)="onExcel()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel</button>
+        <button (click)="onCsv()" class="btn btn-soft btn-info bg-base-100/70 border-info/30 backdrop-blur-3xl">Export as Csv</button>
+        <button (click)="onExcel()" class="btn btn-soft btn-success bg-base-100/70 border-success/30 backdrop-blur-3xl">Export as Excel</button>
       </div>
 
       <div class="static lg:absolute lg:right-6 lg:bottom-6 mt-4 lg:mt-0">
         <form #searchForm (ngSubmit)="onSearch(startDateInput.value, endDateInput.value)" class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
 
           <div class="flex items-center gap-2">
-            <span class="whitespace-nowrap font-medium opacity-80">Start:</span>
-            <input #startDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+            <span class="whitespace-nowrap font-medium opacity-80 text-base-content">Start:</span>
+            <input #startDateInput type="date" required class="input validator bg-base-100/70 backdrop-blur-2xl rounded-box border border-primary/25 text-base-content shadow-sm" />
           </div>
 
           <div class="flex items-center gap-2">
-            <span class="whitespace-nowrap font-medium opacity-80">End:</span>
-            <input #endDateInput type="date" required class="input validator bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-sm" />
+            <span class="whitespace-nowrap font-medium opacity-80 text-base-content">End:</span>
+            <input #endDateInput type="date" required class="input validator bg-base-100/70 backdrop-blur-2xl rounded-box border border-primary/25 text-base-content shadow-sm" />
           </div>
 
           <div class="flex items-center gap-2">
-            <button type="submit" class="btn btn-circle bg-primary/20 backdrop-blur-2xl border border-primary/30 text-primary-content shadow-sm hover:bg-primary/40">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+            <button type="submit" class="btn btn-circle bg-base-100/70 backdrop-blur-2xl border border-primary/25 text-base-content shadow-sm hover:bg-primary/30">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-80">
                 <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
               </svg>
             </button>
-            <button type="button" class="btn btn-ghost bg-primary/50 border-primary/50 text-accent-content" (click)="onClean()">Clean</button>
+            <button type="button" class="btn btn-ghost bg-base-100/70 border border-primary/25 text-base-content hover:bg-primary/20" (click)="onClean()">Clean</button>
           </div>
 
         </form>
@@ -81,11 +81,11 @@
     </div>
   </div>
 
-  <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
+  <div class="card w-full bg-base-300/50 backdrop-blur-2xl border border-primary/20 text-base-content overflow-hidden">
     <div class="overflow-x-auto">
       <table class="table">
 
-        <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+        <thead class="bg-base-100/60 text-base-content font-bold border-b border-primary/20">
         <tr>
           <th>Username</th>
           <th>Date</th>
@@ -101,16 +101,16 @@
         {
           <tbody>
             @for (sheet of timesheets(); track $index){
-              <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+              <tr class="hover:bg-primary/15 transition-colors border-b border-primary/15 text-base-content">
                 <td>{{sheet.user.username}}</td>
                 <td>{{sheet.date}}</td>
-                <td>{{sheet.description}}</td>
+                <td class="opacity-90">{{sheet.description}}</td>
                 <td>{{sheet.startTime}}</td>
                 <td>{{sheet.endTime}}</td>
                 <td>
                   <button
                     (click)="onClickProject(sheet.project.id)"
-                    class="btn btn-ghost hover:bg-accent/50 text-primary-content hover:border-primary">{{sheet.project.name}}
+                    class="btn btn-ghost btn-sm hover:bg-accent/30 text-accent hover:text-base-content border border-transparent hover:border-accent/40">{{sheet.project.name}}
                   </button>
                 </td>
                 <td>
@@ -128,14 +128,14 @@
         {
           <tbody>
             @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-              <tr class="border-b border-primary/30/50">
-                <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                <td><div class="skeleton h-4 w-12 bg-primary/20"></div></td>
+              <tr class="border-b border-primary/15">
+                <td><div class="skeleton h-4 w-20 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-24 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-64 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
+                <td><div class="skeleton h-4 w-12 bg-base-100/40"></div></td>
               </tr>
             }
           </tbody>
@@ -147,11 +147,11 @@
   </div>
 
   <div class="flex justify-center mt-6">
-    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap">
+    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap border border-primary/20">
       @for(page of pageNumbers(); track $index){
         <button
-          class = "join-item btn text-primary-content border-none transition-all duration-300"
-          [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-white' : 'bg-primary/10 hover:bg-primary/30'"
+          class = "join-item btn text-base-content border-none transition-all duration-300"
+          [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-primary-content' : 'bg-base-100/60 hover:bg-primary/30'"
           (click)="loadPage(page)"
         >{{page + 1}}</button>
       }

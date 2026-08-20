@@ -2,62 +2,62 @@
   <div class="absolute top-2 left-2">
     <button
       routerLink = '/dashboard'
-      class="bg-neutral/50 text-neutral-content border-primary/25 btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
+      class="bg-base-100/70 text-base-content border-primary/25 backdrop-blur-3xl btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-lg">
       Dashboard</button>
   </div>
-  <div class="card w-full max-w-md backdrop-blur-md shadow-2xl">
+  <div class="card w-full max-w-md bg-base-200/80 backdrop-blur-2xl border border-primary/25 text-base-content shadow-2xl">
     <form [formGroup]="formGroup" class="card-body p-6" (ngSubmit)="onSubmit()">
 
-      <h2 class="text-2xl font-bold text-center mb-4">Add New Timesheet</h2>
+      <h2 class="text-2xl font-bold text-center mb-4 text-base-content">Add New Timesheet</h2>
 
       @if (errorMessage()) {
-        <div role="alert" class="alert mb-4 bg-error/50 backdrop-blur-sm border border-error/30 text-error">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <div role="alert" class="alert mb-4 bg-error/20 backdrop-blur-sm border border-error/40 text-base-content">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-error" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
-          <span class="text-error-content/90">{{ errorMessage() }}</span>
+          <span class="text-base-content">{{ errorMessage() }}</span>
         </div>
       }
 
       <div class="form-control flex flex-row items-center gap-4">
         <label class="label w-1/4 justify-start p-0" for="date">
-          <span class="label-text">Date</span>
+          <span class="label-text text-base-content">Date</span>
         </label>
         <input formControlName="date" type="date"
-          class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+               class="input input-bordered border-primary/30 focus:border-primary w-3/4 bg-base-100/70 text-base-content"
         />
       </div>
 
       <div class="form-control flex flex-row items-center gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0" for="startTime">
-          <span class="label-text">Start Time</span>
+          <span class="label-text text-base-content">Start Time</span>
         </label>
         <input formControlName="startTime" type="time"
-               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+               class="input input-bordered border-primary/30 focus:border-primary w-3/4 bg-base-100/70 text-base-content"
         />
       </div>
 
       <div class="form-control flex flex-row items-center gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0" for="endTime">
-          <span class="label-text">End Time</span>
+          <span class="label-text text-base-content">End Time</span>
         </label>
         <input formControlName="endTime" type="time"
-               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+               class="input input-bordered border-primary/30 focus:border-primary w-3/4 bg-base-100/70 text-base-content"
         />
       </div>
 
       <div class="form-control flex flex-row items-center gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0" for="description">
-          <span class="label-text">Description</span>
+          <span class="label-text text-base-content">Description</span>
         </label>
         <input formControlName="description"
-               class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+               class="input input-bordered border-primary/30 focus:border-primary w-3/4 bg-base-100/70 text-base-content"
         />
       </div>
 
       <div class="form-control flex flex-row items-center gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0" for="project">
-          <span class="label-text">Project</span>
+          <span class="label-text text-base-content">Project</span>
         </label>
         <div class="dropdown w-3/4">
           <input
@@ -65,18 +65,18 @@
             tabindex="0"
             type="text"
             placeholder="Search for projects"
-            class="input input-bordered w-full bg-black/20 backdrop-blur-2xl"
+            class="input input-bordered border-primary/30 focus:border-primary w-full bg-base-100/70 text-base-content"
             (input)="onSearch($event)"
 
           />
-          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
+          <ul tabindex="-1" class="dropdown-content menu bg-base-200/95 backdrop-blur-2xl border border-primary/20 rounded-box z-1 w-full p-2 shadow-lg">
             @for (project of projects(); track project.id) {
               <li>
-                <a (click)="onSelectedProject(project)">{{ project.name }}</a>
+                <a class="text-base-content" (click)="onSelectedProject(project)">{{ project.name }}</a>
               </li>
             }
             @empty {
-              <li><a class="opacity-50">Results not found</a></li>
+              <li><a class="opacity-50 text-base-content">Results not found</a></li>
             }
           </ul>
         </div>
@@ -85,7 +85,7 @@
       <div class="form-control mt-6">
         <button
           type="submit"
-          class="w-full btn bg-base-100/40 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-all duration-300 px-8 font-semibold"
+          class="w-full btn bg-base-100/50 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-all duration-300 px-8 font-semibold"
           [disabled]="formGroup.invalid"
         >
           Save

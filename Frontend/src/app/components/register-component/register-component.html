@@ -1,35 +1,35 @@
 <div class="flex justify-center items-center h-full w-full">
-  <div class="card w-full max-w-md backdrop-blur-md shadow-2xl">
+  <div class="card w-full max-w-md bg-base-200/80 backdrop-blur-2xl border border-primary/25 text-base-content shadow-2xl">
     <form class="card-body p-6" (ngSubmit)="onRegister(registerForm)" #registerForm="ngForm">
 
-      <h2 class="text-2xl font-bold text-center mb-4">Register</h2>
+      <h2 class="text-2xl font-bold text-center mb-4 text-base-content">Register</h2>
 
       @if (errorMessage()) {
-        <div role="alert" class="alert mb-4 bg-error/50 backdrop-blur-sm border border-error/30 text-error">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <div role="alert" class="alert mb-4 bg-error/20 backdrop-blur-sm border border-error/40 text-base-content">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-error" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
-          <span class="text-error-content/90">{{ errorMessage() }}</span>
+          <span class="text-base-content">{{ errorMessage() }}</span>
         </div>
       }
 
       <div class="form-control flex flex-row items-center gap-4">
         <label class="label w-1/4 justify-start p-0" for="username">
-          <span class="label-text">Username</span>
+          <span class="label-text text-base-content">Username</span>
         </label>
         <input
           id="username"
           name="username"
           [(ngModel)]="username"
           placeholder="Example"
-          class="input input-bordered w-3/4 bg-black/20 backdrop-blur-2xl"
+          class="input input-bordered border-primary/30 focus:border-primary w-3/4 bg-base-100/70 text-base-content"
           required
         />
       </div>
 
       <div class="form-control flex flex-row items-start gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0 pt-3" for="email">
-          <span class="label-text">Email</span>
+          <span class="label-text text-base-content">Email</span>
         </label>
 
         <div class="w-3/4 flex flex-col">
@@ -39,7 +39,7 @@
             [(ngModel)]="email"
             type="email"
             placeholder="example@mail.com"
-            class="input input-bordered w-full bg-black/20 backdrop-blur-2xl"
+            class="input input-bordered border-primary/30 focus:border-primary w-full bg-base-100/70 text-base-content"
             required
           />
           @if (email) {
@@ -56,7 +56,7 @@
 
       <div class="form-control flex flex-row items-start gap-4 mt-4">
         <label class="label w-1/4 justify-start p-0 pt-3" for="password">
-          <span class="label-text">Password</span>
+          <span class="label-text text-base-content">Password</span>
         </label>
 
         <div class="w-3/4 flex flex-col">
@@ -66,7 +66,7 @@
             [(ngModel)]="password"
             type="password"
             placeholder="••••••••"
-            class="input input-bordered w-full bg-black/20 backdrop-blur-2xl"
+            class="input input-bordered border-primary/30 focus:border-primary w-full bg-base-100/70 text-base-content"
             required
           />
           @if (password) {
@@ -91,7 +91,7 @@
       <div class="form-control mt-6">
         <button
           type="submit"
-          class="w-full btn bg-base-100/40 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-all duration-300 px-8 font-semibold"
+          class="w-full btn bg-base-100/50 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-all duration-300 px-8 font-semibold"
           [disabled]="registerForm.invalid"
         >
           Register

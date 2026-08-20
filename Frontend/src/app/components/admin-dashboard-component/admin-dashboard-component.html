@@ -1,39 +1,43 @@
 <div class="h-screen flex flex-col p-6 gap-4.5 overflow-y-auto">
 
-  <div class="z-10 relative min-h-fit lg:h-56 bg-primary/20 backdrop-blur-2xl rounded-box border border-primary/30 text-primary-content shadow-lg">
+  <div class="z-10 relative min-h-fit lg:h-56 bg-base-300/60 backdrop-blur-2xl rounded-box border border-primary/20 text-base-content shadow-lg">
     <div class="h-full overflow-y-auto p-6 flex flex-col lg:block gap-6">
-      <h1 class="text-3xl font-bold">Timesheets</h1>
+      <h1 class="text-3xl font-bold text-base-content">Timesheets</h1>
 
-      <!-- Stats artık normal akışta, absolute değil -->
       <div class="flex flex-col items-center gap-1.5 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:pointer-events-none">
-        <h2 class="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-primary-content/60">
-          Most Worked Projects
-        </h2>
-        <div class="flex gap-2 sm:gap-3 overflow-x-auto max-w-full px-1 pb-1 lg:pointer-events-auto lg:overflow-visible">
-          @for (project of topThreeProjectsFormatted(); track project.projectId) {
-            <div class="shrink-0 bg-neutral/40 backdrop-blur-xl border border-primary/20 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-center min-w-[90px] sm:min-w-[110px] max-w-[130px] sm:max-w-[150px]">
-              <div class="text-xs sm:text-sm font-bold truncate">{{ project.projectName }}</div>
-              <div class="text-[10px] sm:text-xs opacity-70">{{ project.hours }}h {{project.remainingMinutes}}m </div>
-            </div>
-          }
-        </div>
+        @if (isLoading()) {
+          <span class="loading loading-ring loading-xl text-primary"></span>
+        } @else {
+          <h2 class="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-base-content/60">
+            Most Worked Projects
+          </h2>
+          <div class="flex gap-2 sm:gap-3 overflow-x-auto max-w-full px-1 pb-1 lg:pointer-events-auto lg:overflow-visible">
+            @for (project of topThreeProjectsFormatted(); track project.projectId) {
+              <div class="shrink-0 bg-base-100/60 backdrop-blur-xl border border-primary/20 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-center min-w-[90px] sm:min-w-[110px] max-w-[130px] sm:max-w-[150px]">
+                <div class="text-xs sm:text-sm font-bold truncate text-base-content">{{ project.projectName }}</div>
+                <div class="text-[10px] sm:text-xs opacity-70 text-base-content">{{ project.hours }}h {{project.remainingMinutes}}m </div>
+              </div>
+            }
+          </div>
+        }
+
       </div>
 
 
       <div class="static lg:absolute lg:left-10 lg:bottom-10 flex flex-col sm:flex-row gap-4 lg:gap-3">
         <div class="dropdown dropdown-right dropdown-center">
           <div tabindex="0" role="button" class="btn btn-secondary m-1">Export</div>
-          <ul tabindex="-1" class="dropdown-content menu bg-accent-content/55 rounded-box z-1 w-52 p-2 shadow-2xl gap-6">
-            <li><button (click)="onCsvUser()" class="btn btn-soft btn-info bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Users</button></li>
-            <li><button (click)="onExcelUser()" class="btn btn-soft btn-success bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Users</button></li>
-            <li><button (click)="onCsvTimeSheet()" class="btn btn-soft btn-accent bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Csv Timesheets</button></li>
-            <li><button (click)="onExcelTimeSheet()" class="btn btn-soft btn-warning bg-neutral/50 border-neutral/25 backdrop-blur-3xl">Export as Excel Timesheets</button></li>
+          <ul tabindex="-1" class="dropdown-content menu bg-base-200/95 backdrop-blur-2xl rounded-box z-1 w-52 p-2 shadow-2xl gap-6 border border-primary/20">
+            <li><button (click)="onCsvUser()" class="btn btn-soft btn-info bg-base-100/70 border-info/25 backdrop-blur-3xl">Export as Csv Users</button></li>
+            <li><button (click)="onExcelUser()" class="btn btn-soft btn-success bg-base-100/70 border-success/25 backdrop-blur-3xl">Export as Excel Users</button></li>
+            <li><button (click)="onCsvTimeSheet()" class="btn btn-soft btn-accent bg-base-100/70 border-accent/25 backdrop-blur-3xl">Export as Csv Timesheets</button></li>
+            <li><button (click)="onExcelTimeSheet()" class="btn btn-soft btn-warning bg-base-100/70 border-warning/25 backdrop-blur-3xl">Export as Excel Timesheets</button></li>
           </ul>
         </div>
       </div>
 
       <div class="absolute right-5 top-5">
-        <button (click)="logout()" class="btn bg-neutral/50 backdrop-blur-3xl rounded-box border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70">
+        <button (click)="logout()" class="btn bg-base-100/70 backdrop-blur-3xl rounded-box border border-primary/25 text-base-content shadow-sm hover:bg-base-100/90">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
           </svg>
@@ -44,13 +48,13 @@
 
         <form #generalSearchForm (ngSubmit)="onSearchUser(searchInput.value)">
           <div class="join">
-            <label class="input bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm join-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+            <label class="input bg-base-100/70 backdrop-blur-3xl border border-primary/25 text-base-content shadow-sm join-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-80">
                 <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
               </svg>
               <input #searchInput type="search" class="grow" placeholder="Search Users" />
             </label>
-            <button type="submit" class="btn bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70 join-item">
+            <button type="submit" class="btn bg-base-100/70 backdrop-blur-3xl border border-primary/25 text-base-content shadow-sm hover:bg-primary/30 join-item">
               Search
             </button>
           </div>
@@ -61,17 +65,17 @@
             #dateInput
             type="date"
             required
-            class="input validator bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm"
+            class="input validator bg-base-100/70 backdrop-blur-3xl border border-primary/25 text-base-content shadow-sm"
           />
           <button
             type="submit"
-            class="btn btn-circle btn-sm bg-neutral/50 backdrop-blur-3xl border border-neutral/25 text-primary-content shadow-sm hover:bg-neutral/70"
+            class="btn btn-circle btn-sm bg-base-100/70 backdrop-blur-3xl border border-primary/25 text-base-content shadow-sm hover:bg-primary/30"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-70">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[1em] opacity-80">
               <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
             </svg>
           </button>
-          <button type="button" class="btn btn-ghost btn-sm text-primary-content/70 hover:text-primary-content" (click)="onClean()">
+          <button type="button" class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content" (click)="onClean()">
             Clean
           </button>
         </form>
@@ -80,12 +84,12 @@
     </div>
   </div>
 
-  <div class="card w-full bg-primary/10 backdrop-blur-2xl border border-primary/30 text-primary-content overflow-hidden">
+  <div class="card w-full bg-base-300/50 backdrop-blur-2xl border border-primary/20 text-base-content overflow-hidden">
     <div class="overflow-x-auto">
       <table class="table">
 
         @if (viewMode() === 'timesheet') {
-          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+          <thead class="bg-base-100/60 text-base-content font-bold border-b border-primary/20">
           <tr>
             <th>Username</th>
             <th>Date</th>
@@ -99,16 +103,16 @@
           @if (!isLoading()) {
             <tbody>
               @for (sheet of timesheets(); track $index) {
-                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                <tr class="hover:bg-primary/15 transition-colors border-b border-primary/15 text-base-content">
                   <td>{{ sheet.user.username }}</td>
                   <td>{{ sheet.date }}</td>
-                  <td>{{ sheet.description }}</td>
+                  <td class="opacity-90">{{ sheet.description }}</td>
                   <td>{{ sheet.startTime }}</td>
                   <td>{{ sheet.endTime }}</td>
                   <td>
                     <button
                       (click)="onClickProject(sheet.project.id)"
-                      class="btn btn-ghost hover:bg-accent/50 text-primary-content hover:border-primary">{{sheet.project.name}}
+                      class="btn btn-ghost btn-sm hover:bg-accent/30 text-accent hover:text-base-content border border-transparent hover:border-accent/40">{{sheet.project.name}}
                     </button>
                   </td>
                 </tr>
@@ -117,19 +121,19 @@
           } @else {
             <tbody>
               @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-                <tr class="border-b border-primary/30/50">
-                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-64 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-16 bg-primary/20"></div></td>
+                <tr class="border-b border-primary/15">
+                  <td><div class="skeleton h-4 w-20 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-24 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-64 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-16 bg-base-100/40"></div></td>
                 </tr>
               }
             </tbody>
           }
         } @else {
-          <thead class="bg-primary/20 text-primary-content font-bold border-b border-primary/30">
+          <thead class="bg-base-100/60 text-base-content font-bold border-b border-primary/20">
           <tr>
             <th>Username</th>
             <th>Email</th>
@@ -140,7 +144,7 @@
           @if (!isLoading()) {
             <tbody>
               @for (user of users(); track $index) {
-                <tr class="hover:bg-primary/20 transition-colors border-b border-primary/30/50">
+                <tr class="hover:bg-primary/15 transition-colors border-b border-primary/15 text-base-content">
                   <td>{{ user.username }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.role }}</td>
@@ -150,10 +154,10 @@
           } @else {
             <tbody>
               @for (row of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-                <tr class="border-b border-primary/30/50">
-                  <td><div class="skeleton h-4 w-24 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-40 bg-primary/20"></div></td>
-                  <td><div class="skeleton h-4 w-20 bg-primary/20"></div></td>
+                <tr class="border-b border-primary/15">
+                  <td><div class="skeleton h-4 w-24 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-40 bg-base-100/40"></div></td>
+                  <td><div class="skeleton h-4 w-20 bg-base-100/40"></div></td>
                 </tr>
               }
             </tbody>
@@ -165,14 +169,14 @@
   </div>
 
   <div class="flex justify-center mt-6">
-    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap">
+    <div class="join shadow-xl backdrop-blur-2xl rounded-xl overflow-hidden flex-wrap border border-primary/20">
       @for (page of pageNumbers(); track $index) {
         @if (page === '...') {
-          <button class="join-item btn btn-disabled bg-primary/5 border-none">...</button>
+          <button class="join-item btn btn-disabled bg-base-100/30 border-none text-base-content/40">...</button>
         } @else {
           <button
-            class="join-item btn text-primary-content border-none transition-all duration-300"
-            [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-white' : 'bg-primary/10 hover:bg-primary/30'"
+            class="join-item btn text-base-content border-none transition-all duration-300"
+            [ngClass]="page === currentPage() ? 'btn-active bg-primary hover:bg-primary text-primary-content' : 'bg-base-100/60 hover:bg-primary/30'"
             (click)="loadPage(page)"
           >{{ page + 1 }}</button>
         }
