@@ -45,7 +45,7 @@ public class UserService {
 
     public ResponseEntity<?> login(UserLoginDto userLoginDto)
     {
-        Optional<User> userOptional = userRepository.findByMail(userLoginDto.getUsername());
+        Optional<User> userOptional = userRepository.findByUsername(userLoginDto.getUsername());
         Map<String, Object> responseBody = new HashMap<>();
 
         if(userOptional.isPresent())

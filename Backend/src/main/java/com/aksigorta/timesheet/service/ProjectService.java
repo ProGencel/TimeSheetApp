@@ -29,7 +29,7 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
-    private Long getCurrentUserId()
+    public Long getCurrentUserId()
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();

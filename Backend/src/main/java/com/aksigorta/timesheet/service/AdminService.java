@@ -246,7 +246,7 @@ public class AdminService {
                 Sheet sheet = workbook.createSheet("users");
 
                 Row header = sheet.createRow(0);
-                String[] columns = {"ID","User","Email","Role","Project"};
+                String[] columns = {"ID","User","Email","Role"};
                 for(int i = 0;i< columns.length;i++)
                 {
                     header.createCell(i).setCellValue(columns[i]);
