@@ -5,6 +5,7 @@ import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {environment} from '../../../environments/environment.development';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {ProjectDurationDto} from '../../models/project/ProjectDuration';
+import {UserResponse} from '../../models/user/UserResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -33,14 +34,14 @@ export class AdminService {
     return this.http.get<PageResponse<TimeSheet>>(url);
   }
 
-  searchUsers(page: number, q: string) : Observable<PageResponse<TimeSheet>>{
+  searchUsers(page: number, q: string) : Observable<PageResponse<UserResponse>>{
     let url = `${environment.apiUrl}/admin/search_user?page=${page}`;
     if(q)
     {
       url+=`&q=${q}`;
     }
 
-    return this.http.get<PageResponse<TimeSheet>>(url);
+    return this.http.get<PageResponse<UserResponse>>(url);
   }
 
   exportCsvUser(q: string | null): Observable<HttpResponse<Blob>> {

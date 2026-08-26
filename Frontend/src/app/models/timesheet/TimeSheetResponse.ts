@@ -1,4 +1,5 @@
 import {UserResponse} from '../user/UserResponse';
+import {Project} from '../project/Project';
 
 export interface TimeSheetResponse {
   startTime: string;
@@ -6,7 +7,7 @@ export interface TimeSheetResponse {
   description: string;
 
   date: string;
-  project: string;
+  project: Project;
 
   user: UserResponse;
 }

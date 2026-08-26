@@ -63,6 +63,7 @@ export class UpdateTimesheetComponent implements OnInit {
       this.timeSheetService.getTimeSheetById(this.id).subscribe({
         next: (response) => {
           this.formGroup.patchValue(response);
+          this.projectInput.nativeElement.value = response.project.name;
         },
         error: (error) => {
           console.log(error);

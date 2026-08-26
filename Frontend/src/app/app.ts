@@ -1,11 +1,10 @@
 import {Component, signal} from '@angular/core';
-import { AnimatedGradient } from './components/animated-gradient/animated-gradient';
 import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [AnimatedGradient, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

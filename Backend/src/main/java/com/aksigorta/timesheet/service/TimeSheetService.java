@@ -91,7 +91,7 @@ public class TimeSheetService {
                 else
                 {
                     Project project = projectOptional.get();
-                    if(project.getMemberIds() != null && !isContainsUser(project.getMemberIds()))
+                    if(project.getMember_ids() != null && !isContainsUser(project.getMember_ids()))
                     {
                         Map<String,Object> errorMap = Map.of("Error Message: ","You cannot use this project");
                         return ResponseEntity.badRequest().body(errorMap);

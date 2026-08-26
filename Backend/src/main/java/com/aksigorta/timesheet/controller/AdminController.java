@@ -51,6 +51,12 @@ public class AdminController {
         return adminService.getTopThreeProjects();
     }
 
+    @GetMapping("weekly-hours/{userId}")
+    public ResponseEntity<?> getWeeklyHours(@PathVariable Long userId)
+    {
+        return adminService.getWeeklyWorkHoursByUserId(userId);
+    }
+
     @GetMapping({"export","export/{userId}"})
     public ResponseEntity<?> export(@PathVariable(required = false) Long userId,
                                     @RequestParam(defaultValue = "csv") String exportFormat,

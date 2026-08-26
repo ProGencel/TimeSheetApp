@@ -6,4 +6,5 @@ export interface Project {
   description: string;
   user: UserResponse;
   finished: boolean;
+  member_ids: number[];
 }

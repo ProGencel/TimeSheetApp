@@ -10,13 +10,15 @@ import {UserResponse} from '../../models/user/UserResponse';
 import {AuthService} from '../../services/auth-service/auth-service';
 import {ProjectCardComponent} from '../project-card-component/project-card-component';
 import {ProjectDurationDto} from '../../models/project/ProjectDuration';
+import {NewProjectComponent} from '../new-project-component/new-project-component';
 
 @Component({
   selector: 'app-admin-dashboard-component',
   imports: [
     FormsModule,
     NgClass,
-    ProjectCardComponent
+    ProjectCardComponent,
+    NewProjectComponent
   ],
   templateUrl: './admin-dashboard-component.html',
   styleUrl: './admin-dashboard-component.css',
@@ -39,6 +41,7 @@ export class AdminDashboardComponent implements OnInit {
   users = signal<UserResponse[]>([]);
   viewMode = signal<'timesheet' | 'user'>('timesheet');
   topThreeProjects = signal<ProjectDurationDto[]>([]);
+  protected isNewProjectModalOpen = signal(false);
 
 
   ngOnInit(): void {
@@ -47,7 +50,7 @@ export class AdminDashboardComponent implements OnInit {
 
   loadPage(page: number)
   {
-    let request$: Observable<PageResponse<TimeSheet>> | Observable<PageResponse<UserResponse>>;
+    let request$: Observable<PageResponse<TimeSheet | UserResponse>>;
     let mode: 'timesheet' | 'user';
 
     if(this.q)
@@ -138,7 +141,14 @@ export class AdminDashboardComponent implements OnInit {
 
   onSearchUser(q: string)
   {
-    this.q = q;
+    if(q.length == 0)
+    {
+      this.q = " ";
+    }
+    else
+    {
+      this.q = q;
+    }
     this.loadPage(0);
   }
 
@@ -181,7 +191,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.exportExcelUser(this.q).subscribe({
       next: (response) => {
         const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = 'users.xlsx'; // fallback
+        let fileName = 'users.xlsx';
 
         if (contentDisposition) {
           const match = contentDisposition.match(/filename=(.+)/);
@@ -208,7 +218,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.exportCsvTimesheet(this.date).subscribe({
       next: (response) => {
         const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = 'timesheets.csv'; // fallback
+        let fileName = 'timesheets.csv';
 
         if (contentDisposition) {
           const match = contentDisposition.match(/filename=(.+)/);
@@ -237,7 +247,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.exportExcelTimesheet(this.date).subscribe({
       next: (response) => {
         const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = 'timesheets.xlsx'; // fallback
+        let fileName = 'timesheets.xlsx';
 
         if (contentDisposition) {
           const match = contentDisposition.match(/filename=(.+)/);
@@ -271,6 +281,15 @@ export class AdminDashboardComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedProjectId = null;
+  }
+
+  onCloseNewModal(): void {
+    this.isNewProjectModalOpen.set(false);
+  }
+
+  onClickNewProject(): void
+  {
+    this.isNewProjectModalOpen.set(true);
   }
 
 }

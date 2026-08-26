@@ -1,5 +1,5 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" (click)="onClose()">
-  <div class="card bg-base-200/80 backdrop-blur-2xl border border-primary/25 border-t-4 border-t-primary text-base-content shadow-2xl rounded-box w-full max-w-md"
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" (click)="onClose()">
+  <div class="card bg-base-100 border border-base-300 border-t-4 border-t-primary text-base-content shadow-lg rounded-box w-full max-w-md"
        (click)="$event.stopPropagation()">
     <div class="card-body p-6 gap-4 relative">
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
@@ -7,16 +7,16 @@
           <h2 class="text-xl font-bold leading-tight tracking-tight pr-6">New project</h2>
 
           @if (errorMessage()) {
-            <div role="alert" class="alert mb-4 bg-error/20 backdrop-blur-sm border border-error/40 text-base-content">
+            <div role="alert" class="alert mb-4 bg-error/20 border border-error/40 text-base-content rounded-box shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-error" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
               </svg>
-              <span class="text-base-content">{{ errorMessage() }}</span>
+              <span class="text-base-content font-medium">{{ errorMessage() }}</span>
             </div>
           }
 
           <button
-            class="btn btn-ghost btn-xs btn-circle absolute right-0 top-0 text-base-content"
+            class="btn btn-ghost btn-xs btn-circle absolute right-0 top-0 text-base-content hover:bg-base-300/50"
             (click)="onClose()">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -34,7 +34,7 @@
             id="project-name"
             type="text"
             placeholder="e.g. Marketing website redesign"
-            class="input input-bordered border-primary/30 focus:border-primary w-full bg-base-100/70 text-base-content" />
+            class="input input-bordered border-base-300 focus:border-primary w-full bg-base-100 text-base-content shadow-sm" />
         </div>
 
         <div class="form-control w-full gap-1.5">
@@ -46,16 +46,63 @@
             id="project-description"
             placeholder="What is this project about?"
             rows="4"
-            class="textarea textarea-bordered border-primary/30 focus:border-primary w-full bg-base-100/70 text-base-content resize-none"></textarea>
+            class="textarea textarea-bordered border-base-300 focus:border-primary w-full bg-base-100 text-base-content resize-none shadow-sm"></textarea>
         </div>
 
-        <div class="divider my-0 opacity-20"></div>
+        <div class="form-control w-full gap-1.5 mt-2">
+          <label class="label py-0" for="project-users">
+            <span class="label-text font-medium text-base-content">Participants</span>
+          </label>
+
+          @if (selectedUsers().length > 0) {
+            <div class="flex flex-wrap gap-1.5 mb-1">
+              @for (user of selectedUsers(); track user.id) {
+                <span class="badge badge-primary gap-1.5 py-3">
+                  {{ user.username }}
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-xs btn-circle -mr-1 h-4 w-4 min-h-0"
+                    (click)="onRemoveUser(user)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </span>
+              }
+            </div>
+          }
+
+          <div class="dropdown w-full">
+            <input
+              #userInput
+              id="project-users"
+              tabindex="0"
+              type="text"
+              placeholder="Search users to add"
+              class="input input-bordered border-base-300 focus:border-primary w-full bg-base-100 text-base-content shadow-sm"
+              (input)="onSearch($event)"
+            />
+            <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-base-300 rounded-box z-1 w-full p-2 shadow-lg mt-1">
+              @for (user of users(); track user.id) {
+                <li>
+                  <a class="text-base-content hover:bg-base-300/40" (click)="onSelectUser(user)">{{ user.username }}</a>
+                </li>
+              }
+              @empty {
+                <li><a class="opacity-50 text-base-content pointer-events-none">Results not found</a></li>
+              }
+            </ul>
+          </div>
+        </div>
+
+        <div class="divider my-0"></div>
 
         <div class="flex items-center justify-end gap-2">
-          <button class="btn btn-ghost text-base-content" (click)="onClose()">
+          <button type="button" class="btn btn-ghost text-base-content hover:bg-base-300/50" (click)="onClose()">
             Cancel
           </button>
-          <button class="btn btn-primary" >
+          <button type="submit" class="btn btn-primary" [disabled]="formGroup.invalid">
             Save project
           </button>
         </div>

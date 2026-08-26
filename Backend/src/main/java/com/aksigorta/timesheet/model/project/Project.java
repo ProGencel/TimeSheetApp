@@ -1,7 +1,6 @@
 package com.aksigorta.timesheet.model.project;
 
 import com.aksigorta.timesheet.model.user.User;
-import com.aksigorta.timesheet.model.user.UserResponseDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,7 +21,7 @@ public class Project {
     @ManyToOne
     private User user;
 
-    private Long[] memberIds;
+    private Long[] member_ids;
 
     private boolean isFinished = false;
 

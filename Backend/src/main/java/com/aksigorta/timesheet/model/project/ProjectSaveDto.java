@@ -1,6 +1,5 @@
 package com.aksigorta.timesheet.model.project;
 
-import com.aksigorta.timesheet.model.user.UserResponseDto;
 import lombok.Data;
 
 /**
@@ -11,6 +10,6 @@ public class ProjectSaveDto{
     String name;
     String description;
 
-    Long[] memberIds;
+    Long[] member_ids;
 
 }
