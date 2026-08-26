@@ -1,14 +1,16 @@
 package com.aksigorta.timesheet.model.project;
 
-import lombok.Value;
-
-import java.io.Serializable;
+import com.aksigorta.timesheet.model.user.UserResponseDto;
+import lombok.Data;
 
 /**
  * DTO for {@link Project}
  */
-@Value
-public class ProjectSaveDto implements Serializable {
+@Data
+public class ProjectSaveDto{
     String name;
     String description;
+
+    Long[] memberIds;
+
 }

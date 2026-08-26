@@ -5,12 +5,10 @@ import com.aksigorta.timesheet.model.timeSheet.TimeSheet;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetResponseDto;
 import com.aksigorta.timesheet.model.timeSheet.TimeSheetSaveDto;
 import com.aksigorta.timesheet.model.user.User;
-import com.aksigorta.timesheet.model.user.UserResponseDto;
 import com.aksigorta.timesheet.repository.ProjectRepository;
 import com.aksigorta.timesheet.repository.TimeSheetRepository;
 import com.aksigorta.timesheet.repository.UserRepository;
 import com.aksigorta.timesheet.security.CustomUserDetails;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -84,9 +82,22 @@ public class TimeSheetService {
             timeSheet.setUser(userOptional.get());
 
             if (timeSheetSaveDto.getProjectId() != null) {
-                Project project = projectRepository.findById(timeSheetSaveDto.getProjectId())
-                        .orElseThrow(() -> new EntityNotFoundException("Project not found: " + timeSheetSaveDto.getProjectId()));
-                timeSheet.setProject(project);
+                Optional<Project> projectOptional = projectRepository.findById(timeSheetSaveDto.getProjectId());
+                if(projectOptional.isEmpty())
+                {
+                    Map<String,Object> errorMap = Map.of("Error Message: ","Project cannot find");
+                    return ResponseEntity.badRequest().body(errorMap);
+                }
+                else
+                {
+                    Project project = projectOptional.get();
+                    if(project.getMemberIds() != null && !isContainsUser(project.getMemberIds()))
+                    {
+                        Map<String,Object> errorMap = Map.of("Error Message: ","You cannot use this project");
+                        return ResponseEntity.badRequest().body(errorMap);
+                    }
+                }
+                timeSheet.setProject(projectOptional.get());
             }
 
             timeSheetRepository.save(timeSheet);
@@ -320,6 +331,18 @@ public class TimeSheetService {
         timeSheet.setStartTime(dto.getStartTime());
         timeSheet.setEndTime(dto.getEndTime());
         timeSheet.setDescription(dto.getDescription());
+    }
+
+    private boolean isContainsUser(Long[] arr)
+    {
+        for(Long id : arr)
+        {
+            if(id.equals(getCurrentUserId()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

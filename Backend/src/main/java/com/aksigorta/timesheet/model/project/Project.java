@@ -22,6 +22,8 @@ public class Project {
     @ManyToOne
     private User user;
 
+    private Long[] memberIds;
+
     private boolean isFinished = false;
 
 }

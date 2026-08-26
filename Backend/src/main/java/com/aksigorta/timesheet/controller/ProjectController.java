@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("save")
     public ResponseEntity<?> save(@Valid @RequestBody ProjectSaveDto projectSaveDto)
     {
