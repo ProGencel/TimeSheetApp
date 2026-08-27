@@ -1,12 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
-@plugin "daisyui";
+
+@plugin "daisyui" { themes: all; }
 
 :root {
   --inter-font: "Inter", sans-serif;
 }
-
+@plugin "daisyui/theme" {
+  name: "fantasy";
+  default: false;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(96% 0.002 247);
+  --color-base-300: oklch(90% 0.003 247);
+  --color-base-content: oklch(27.807% 0.029 256.847);
+  --color-primary: oklch(57% 0.245 27.325);
+  --color-primary-content: oklch(98% 0.003 247.858);
+  --color-secondary: oklch(38% 0.02 256);
+  --color-secondary-content: oklch(98% 0.003 247.858);
+  --color-accent: oklch(53.92% 0.162 241.36);
+  --color-accent-content: oklch(98% 0.003 247.858);
+  --color-neutral: oklch(27.807% 0.029 256.847);
+  --color-neutral-content: oklch(98% 0.003 247.858);
+  --color-info: oklch(72.06% 0.191 231.6);
+  --color-info-content: oklch(0% 0 0);
+  --color-success: oklch(64.8% 0.15 160);
+  --color-success-content: oklch(0% 0 0);
+  --color-warning: oklch(84.71% 0.199 83.87);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(71.76% 0.221 22.18);
+  --color-error-content: oklch(0% 0 0);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
 @plugin "daisyui/theme" {
   name: "oceanictheme";
   default: true;
