@@ -48,33 +48,26 @@
         </button>
       </div>
 
-      <div class="static lg:absolute lg:right-6 lg:bottom-6 flex flex-col lg:flex-row items-center gap-3">
+      <div class="static lg:absolute lg:right-6 lg:bottom-6 flex flex-col lg:flex-row items-center gap-4">
 
-        <form #generalSearchForm (ngSubmit)="onSearchUser(searchInput.value)">
-          <div class="join">
-            <label class="input input-sm bg-base-100 border border-base-300 text-base-content shadow-sm join-item flex items-center gap-2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 opacity-60">
-                <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
-              </svg>
-              <input #searchInput type="search" class="grow" placeholder="Search Users" />
-            </label>
-            <button type="submit" class="btn btn-sm btn-neutral border-base-300 shadow-sm join-item">
-              Search
-            </button>
-          </div>
-        </form>
+        <!-- Timesheet Search: username + tarih aralığı -->
+        <form #timesheetSearchForm
+              (ngSubmit)="onSearchTimeSheets(usernameInput.value, startDateInput.value, endDateInput.value)"
+              class="flex items-center gap-2">
+          <label class="input input-sm bg-base-100 border border-base-300 text-base-content shadow-sm flex items-center gap-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 opacity-60">
+              <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+            </svg>
+            <input #usernameInput type="search" class="grow" placeholder="Username" />
+          </label>
 
-        <form #searchForm (ngSubmit)="onSearchTimeSheets(dateInput.value)" class="flex items-center gap-2">
-          <input
-            #dateInput
-            type="date"
-            required
-            class="input input-sm validator bg-base-100 border border-base-300 text-base-content shadow-sm"
-          />
-          <button
-            type="submit"
-            class="btn btn-square btn-sm btn-neutral border-base-300 shadow-sm"
-          >
+          <input #startDateInput type="date"
+                 class="input input-sm bg-base-100 border border-base-300 text-base-content shadow-sm" />
+          <span class="text-base-content/50 text-sm">–</span>
+          <input #endDateInput type="date"
+                 class="input input-sm bg-base-100 border border-base-300 text-base-content shadow-sm" />
+
+          <button type="submit" class="btn btn-square btn-sm btn-neutral border-base-300 shadow-sm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 opacity-80">
               <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
             </svg>
@@ -82,6 +75,21 @@
           <button type="button" class="btn btn-ghost btn-sm text-base-content/60 hover:text-base-content" (click)="onClean()">
             Clean
           </button>
+        </form>
+
+        <!-- User Search: ayrı, bağımsız buton/form -->
+        <form #userSearchForm (ngSubmit)="onSearchUser(userSearchInput.value)">
+          <div class="join">
+            <label class="input input-sm bg-base-100 border border-base-300 text-base-content shadow-sm join-item flex items-center gap-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 opacity-60">
+                <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+              </svg>
+              <input #userSearchInput type="search" class="grow" placeholder="Search Users" />
+            </label>
+            <button type="submit" class="btn btn-sm btn-neutral border-base-300 shadow-sm join-item">
+              Search Users
+            </button>
+          </div>
         </form>
 
       </div>
@@ -149,7 +157,9 @@
           @if (!isLoading()) {
             <tbody class="divide-y divide-base-300/40">
               @for (user of users(); track $index) {
-                <tr class="hover:bg-base-300/40 transition-colors text-base-content">
+                <tr
+                  (click)="onClickUser(user.id, user.username)"
+                  class="hover:bg-base-300/40 transition-colors text-base-content cursor-pointer">
                   <td class="font-medium">{{ user.username }}</td>
                   <td class="text-base-content/80">{{ user.email }}</td>
                   <td>
@@ -203,4 +213,32 @@
   <app-new-project-component
     (closeNew)="onCloseNewModal()">
   </app-new-project-component>
+}
+
+@if (isWeeklyHoursModalOpen()) {
+  <div class="modal modal-open">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">{{ selectedUsername }} — This week</h3>
+
+      <div class="py-4">
+        @if (isWeeklyHoursLoading()) {
+          <div class="flex justify-center">
+            <span class="loading loading-ring loading-lg text-primary"></span>
+          </div>
+        } @else {
+          @if (weeklyHoursFormatted(); as formatted) {
+            <p class="text-2xl font-semibold text-base-content">
+              {{ formatted.hours }} hours {{ formatted.remainingMinutes }} minutes worked this week
+            </p>
+          } @else {
+            <p class="text-base-content/60">There is no records for this week</p>
+          }
+        }
+      </div>
+
+      <div class="modal-action">
+        <button class="btn btn-sm" (click)="closeWeeklyHoursModal()">Close</button>
+      </div>
+    </div>
+  </div>
 }

@@ -25,7 +25,7 @@ class ProjectControllerTest {
 
     @Test
     void save_shouldDelegateToService() {
-        ProjectSaveDto dto = new ProjectSaveDto("","");
+        ProjectSaveDto dto = new ProjectSaveDto();
         ResponseEntity<?> expectedResponse = ResponseEntity.ok().build();
         doReturn(expectedResponse).when(projectService).saveProject(dto);
 
@@ -38,12 +38,12 @@ class ProjectControllerTest {
     @Test
     void search_shouldDelegateToService() {
         Page<Project> expectedPage = Page.empty();
-        when(projectService.searchProject("test", 0)).thenReturn(expectedPage);
+        when(projectService.searchMyProjects("test", 0)).thenReturn(expectedPage);
 
-        Page<Project> result = projectController.search("test", 0);
+        ResponseEntity<?> response = projectController.searchProject("test", 0);
 
-        assertThat(result).isEqualTo(expectedPage);
-        verify(projectService).searchProject("test", 0);
+        assertThat(response.getBody()).isEqualTo(expectedPage);
+        verify(projectService).searchMyProjects("test", 0);
     }
 
     @Test

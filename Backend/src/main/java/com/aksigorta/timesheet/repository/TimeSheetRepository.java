@@ -11,31 +11,59 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface TimeSheetRepository extends JpaRepository<TimeSheet,Long> {
+public interface TimeSheetRepository extends JpaRepository<TimeSheet, Long> {
 
-   // @Query(value = "SELECT * FROM timesheets where user_id = ?1",nativeQuery = true)
-    Page<TimeSheet> findByUserIdEquals(Long user_id, Pageable pageable);
+      // @Query(value = "SELECT * FROM timesheets where user_id = ?1",nativeQuery =
+      // true)
+      Page<TimeSheet> findByUserIdEquals(Long user_id, Pageable pageable);
 
-    Page<TimeSheet> findByUserIdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long userId, LocalDate date, LocalDate date1, Pageable pageable);
+      Page<TimeSheet> findByUserIdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long userId, LocalDate date,
+                  LocalDate date1, Pageable pageable);
 
-   @Query("SELECT t FROM timesheets t WHERE t.user.id = :userId " +
-         "AND t.date >= :startDate AND t.date <= :endDate")
-    List<TimeSheet> findAllForExport(@Param("userId")Long userId,
-                                     @Param("startDate") LocalDate date,
-                                     @Param("endDate") LocalDate date1,
-                                     Sort sort);
+      @Query("SELECT t FROM timesheets t WHERE t.user.id = :userId " +
+                  "AND t.date >= :startDate AND t.date <= :endDate")
+      List<TimeSheet> findAllForExport(@Param("userId") Long userId,
+                  @Param("startDate") LocalDate date,
+                  @Param("endDate") LocalDate date1,
+                  Sort sort);
 
-    Page<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Pageable pageable);
-    List<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Sort sort);
+      Page<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Pageable pageable);
 
-    Page<TimeSheet> findByUser_IdEquals(Long id, Pageable pageable);
-    List<TimeSheet> findByUser_IdEquals(Long id, Sort sort);
+      List<TimeSheet> findByUser_IdEqualsAndDateEquals(Long id, LocalDate date, Sort sort);
 
-    List<TimeSheet> findByDateEquals(LocalDate localDate, Sort sort);
+      Page<TimeSheet> findByUser_IdEquals(Long id, Pageable pageable);
 
-    Page<TimeSheet> findByDateEquals(LocalDate localDate, Pageable pageable);
+      List<TimeSheet> findByUser_IdEquals(Long id, Sort sort);
 
-    List<TimeSheet> findByUser_IdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long id, LocalDate date, LocalDate date1);
+      List<TimeSheet> findByDateEquals(LocalDate localDate, Sort sort);
 
+      Page<TimeSheet> findByDateEquals(LocalDate localDate, Pageable pageable);
+
+      List<TimeSheet> findByUser_IdEqualsAndDateGreaterThanEqualAndDateLessThanEqual(Long id, LocalDate date,
+                  LocalDate date1);
+
+      @Query("""
+                  SELECT t FROM timesheets t
+                  WHERE (cast(:username as text) IS NULL OR LOWER(t.user.username) LIKE LOWER(CONCAT('%', cast(:username as text), '%')))
+                  AND (cast(:startDate as date) IS NULL OR t.date >= :startDate)
+                  AND (cast(:endDate as date) IS NULL OR t.date <= :endDate)
+                  """)
+      Page<TimeSheet> searchByUsernameAndDateRange(
+                  @Param("username") String username,
+                  @Param("startDate") LocalDate startDate,
+                  @Param("endDate") LocalDate endDate,
+                  Pageable pageable);
+
+      @Query("""
+                  SELECT t FROM timesheets t
+                  WHERE (cast(:username as text) IS NULL OR LOWER(t.user.username) LIKE LOWER(CONCAT('%', cast(:username as text), '%')))
+                  AND (cast(:startDate as date) IS NULL OR t.date >= :startDate)
+                  AND (cast(:endDate as date) IS NULL OR t.date <= :endDate)
+                  """)
+      List<TimeSheet> searchByUsernameAndDateRange(
+                  @Param("username") String username,
+                  @Param("startDate") LocalDate startDate,
+                  @Param("endDate") LocalDate endDate,
+                  Sort sort);
 
 }

@@ -55,14 +55,6 @@ public class ProjectService {
         }
     }
 
-    public Page<Project> searchProject(String q,int page)
-    {
-        Pageable pageable = PageRequest.of(page,10);
-        Page<Project> projectPage = projectRepository.findByNameContainsIgnoreCase(q,pageable);
-
-        return projectPage;
-    }
-
     public ResponseEntity<?> get(Long id)
     {
         Optional<Project> projectOptional = projectRepository.findById(id);
@@ -105,6 +97,13 @@ public class ProjectService {
             }
         }
         return ResponseEntity.badRequest().body(Map.of("Success",false,"Error Message:","Project cannot find"));
+    }
+
+    public Page<Project> searchMyProjects(String q, int page)
+    {
+        Long userId = getCurrentUserId();
+        Pageable pageable = PageRequest.of(page, 10);
+        return projectRepository.findByNameContainsIgnoreCaseAndMember(q, userId, pageable);
     }
 
 }

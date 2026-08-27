@@ -91,7 +91,7 @@ class TimeSheetServiceTest {
     }
 
     @Test
-    void save_shouldThrowException_whenProjectNotFound() {
+    void save_shouldReturnBadRequest_whenProjectNotFound() {
         // ARRANGE
         doReturn(1L).when(timeSheetService).getCurrentUserId();
 
@@ -107,9 +107,11 @@ class TimeSheetServiceTest {
 
         when(projectRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // ACT & ASSERT
-        assertThrows(EntityNotFoundException.class, () -> timeSheetService.save(dto));
+        // ACT
+        ResponseEntity<?> result = timeSheetService.save(dto);
 
+        // ASSERT
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         verify(timeSheetRepository, never()).save(any(TimeSheet.class));
     }
 

@@ -34,74 +34,73 @@ export class AdminService {
     return this.http.get<PageResponse<TimeSheet>>(url);
   }
 
-  searchUsers(page: number, q: string) : Observable<PageResponse<UserResponse>>{
-    let url = `${environment.apiUrl}/admin/search_user?page=${page}`;
-    if(q)
-    {
-      url+=`&q=${q}`;
-    }
-
-    return this.http.get<PageResponse<UserResponse>>(url);
+  searchUsers(page: number, q: string): Observable<PageResponse<UserResponse>> {
+    return this.http.get<PageResponse<UserResponse>>(
+      `${environment.apiUrl}/admin/search_user?page=${page}&q=${encodeURIComponent(q)}`
+    );
   }
 
-  exportCsvUser(q: string | null): Observable<HttpResponse<Blob>> {
-    let url = '';
-    if(q)
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=csv&q=${q}&inputFormat=user`;
-    }
-    else
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=user`;
-    }
-
-
-    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  getWeeklyHoursByUserId(userId: number): Observable<number> {
+    return this.http.get<number>(`${environment.apiUrl}/admin/weekly-hours/${userId}`);
   }
 
-  exportExcelUser(q: string | null): Observable<HttpResponse<Blob>> {
-    let url = '';
-    if(q)
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&q=${q}&inputFormat=user`;
+  searchTimeSheetsByDateRange(
+    page: number,
+    startDate: string | null,
+    endDate: string | null,
+    username: string | null = null
+  ): Observable<PageResponse<TimeSheet>> {
+    let url = `${environment.apiUrl}/admin/search_timesheets?page=${page}`;
+
+    if (username) {
+      url += `&username=${encodeURIComponent(username)}`;
     }
-    else
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=user`;
+    if (startDate) {
+      url += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+      url += `&endDate=${endDate}`;
     }
 
-    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+    return this.http.get<PageResponse<TimeSheet>>(url);
   }
 
-  exportCsvTimesheet(date: string | null):Observable<HttpResponse<Blob>>
-  {
-    let url = '';
-    if(date)
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=csv&localDate=${date}&inputFormat=timesheet`;
-    }
-    else
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=timesheet`;
-    }
-
-    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  exportCsvUser(q: string | null): Observable<any> {
+    const query = q ? `&q=${encodeURIComponent(q)}` : '';
+    return this.http.get(
+      `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=user${query}`,
+      { observe: 'response', responseType: 'blob' as 'json' }
+    );
   }
 
-  exportExcelTimesheet(date: string | null):Observable<HttpResponse<Blob>>
-  {
-    let url = '';
-    if(date)
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&localDate=${date}&inputFormat=timesheet`;
-    }
-    else
-    {
-      url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=timesheet`;
-    }
-
-    return this.http.get(url, { responseType: 'blob', observe: 'response'});
+  exportExcelUser(q: string | null): Observable<any> {
+    const query = q ? `&q=${encodeURIComponent(q)}` : '';
+    return this.http.get(
+      `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=user${query}`,
+      { observe: 'response', responseType: 'blob' as 'json' }
+    );
   }
+
+  // ---- EXPORT: TIMESHEET'LER (artık tarih aralığı ile) ----
+
+  exportCsvTimesheet(startDate: string | null, endDate: string | null, q: string | null = null): Observable<any> {
+    let url = `${environment.apiUrl}/admin/export?exportFormat=csv&inputFormat=timesheet`;
+    if (q) url += `&q=${encodeURIComponent(q)}`;
+    if (startDate) url += `&startDate=${startDate}`;
+    if (endDate) url += `&endDate=${endDate}`;
+
+    return this.http.get(url, { observe: 'response', responseType: 'blob' as 'json' });
+  }
+
+  exportExcelTimesheet(startDate: string | null, endDate: string | null, q: string | null = null): Observable<any> {
+    let url = `${environment.apiUrl}/admin/export?exportFormat=excel&inputFormat=timesheet`;
+    if (q) url += `&q=${encodeURIComponent(q)}`;
+    if (startDate) url += `&startDate=${startDate}`;
+    if (endDate) url += `&endDate=${endDate}`;
+
+    return this.http.get(url, { observe: 'response', responseType: 'blob' as 'json' });
+  }
+
 
   getTopThree(): Observable<ProjectDurationDto[]>
   {

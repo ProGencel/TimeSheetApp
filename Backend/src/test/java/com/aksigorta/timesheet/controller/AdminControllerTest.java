@@ -52,14 +52,17 @@ class AdminControllerTest {
 
     @Test
     void searchTimeSheets_shouldDelegateToService() {
-        LocalDate date = LocalDate.of(2026, 1, 1);
-        ResponseEntity<?> expectedResponse = ResponseEntity.ok().build();
-        doReturn(expectedResponse).when(adminService).searchTimeSheet(0, 1L, date);
+        LocalDate startDate = LocalDate.of(2026, 1, 1);
+        LocalDate endDate = LocalDate.of(2026, 1, 31);
+        String username = "ali";
 
-        ResponseEntity<?> result = adminController.searchTimeSheets(1L, 0, date);
+        Page<TimeSheetResponseDto> expectedPage = Page.empty();
+        when(adminService.searchTimeSheet(0, username, startDate, endDate)).thenReturn(expectedPage);
 
-        assertThat(result).isEqualTo(expectedResponse);
-        verify(adminService).searchTimeSheet(0, 1L, date);
+        ResponseEntity<?> result = adminController.searchTimeSheets(0, username, startDate, endDate);
+
+        assertThat(result.getBody()).isEqualTo(expectedPage);
+        verify(adminService).searchTimeSheet(0, username, startDate, endDate);
     }
 
     @Test

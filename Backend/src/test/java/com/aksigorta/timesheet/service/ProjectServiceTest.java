@@ -50,7 +50,8 @@ class ProjectServiceTest {
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        ProjectSaveDto dto = new ProjectSaveDto("Backend Refactor","");
+        ProjectSaveDto dto = new ProjectSaveDto();
+        dto.setName("Backend Refactor");
 
         // ACT
         ResponseEntity<?> result = projectService.saveProject(dto);
@@ -70,7 +71,8 @@ class ProjectServiceTest {
 
         when(projectRepository.findByName("Backend Refactor")).thenReturn(Optional.of(existingProject));
 
-        ProjectSaveDto dto = new ProjectSaveDto("Backend Refactor","");
+        ProjectSaveDto dto = new ProjectSaveDto();
+        dto.setName("Backend Refactor");
 
         // ACT
         ResponseEntity<?> result = projectService.saveProject(dto);
@@ -84,6 +86,8 @@ class ProjectServiceTest {
     @Test
     void searchProject_shouldReturnMatchingPage_whenProjectsFound() {
         // ARRANGE
+        doReturn(1L).when(projectService).getCurrentUserId();
+
         Project p1 = new Project();
         p1.setId(1L);
         p1.setName("Backend Refactor");
@@ -94,11 +98,11 @@ class ProjectServiceTest {
 
         Page<Project> projectPage = new PageImpl<>(List.of(p1, p2));
 
-        when(projectRepository.findByNameContainsIgnoreCase(eq("backend"), any(Pageable.class)))
+        when(projectRepository.findByNameContainsIgnoreCaseAndMember(eq("backend"), eq(1L), any(Pageable.class)))
                 .thenReturn(projectPage);
 
         // ACT
-        Page<Project> result = projectService.searchProject("backend", 0);
+        Page<Project> result = projectService.searchMyProjects("backend", 0);
 
         // ASSERT
         assertThat(result.getContent()).hasSize(2);
@@ -108,13 +112,15 @@ class ProjectServiceTest {
     @Test
     void searchProject_shouldReturnEmptyPage_whenNoMatchFound() {
         // ARRANGE
+        doReturn(1L).when(projectService).getCurrentUserId();
+
         Page<Project> emptyPage = new PageImpl<>(List.of());
 
-        when(projectRepository.findByNameContainsIgnoreCase(eq("nonexistent"), any(Pageable.class)))
+        when(projectRepository.findByNameContainsIgnoreCaseAndMember(eq("nonexistent"), eq(1L), any(Pageable.class)))
                 .thenReturn(emptyPage);
 
         // ACT
-        Page<Project> result = projectService.searchProject("nonexistent", 0);
+        Page<Project> result = projectService.searchMyProjects("nonexistent", 0);
 
         // ASSERT
         assertThat(result.getContent()).isEmpty();

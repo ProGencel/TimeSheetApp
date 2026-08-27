@@ -52,26 +52,15 @@ public class AdminService {
         return userResponseDtoPage;
     }
 
-    public ResponseEntity<?> searchTimeSheet(int page, Long userId, LocalDate localDate)
+    public Page<TimeSheetResponseDto> searchTimeSheet(int page, String username, LocalDate startDate, LocalDate endDate)
     {
         Sort sort = Sort.by(Sort.Direction.DESC, "date");
         Pageable pageable = PageRequest.of(page, 10, sort);
 
-        Page<TimeSheet> timeSheetPage;
+        Page<TimeSheet> timeSheetPage = timeSheetRepository
+                .searchByUsernameAndDateRange(username, startDate, endDate, pageable);
 
-        if (userId != null && localDate != null) {
-            timeSheetPage = timeSheetRepository.findByUser_IdEqualsAndDateEquals(userId, localDate, pageable);
-        } else if (userId != null) {
-            timeSheetPage = timeSheetRepository.findByUser_IdEquals(userId, pageable);
-        } else if (localDate != null) {
-            timeSheetPage = timeSheetRepository.findByDateEquals(localDate, pageable);
-        } else {
-            timeSheetPage = timeSheetRepository.findAll(pageable);
-        }
-
-        Page<TimeSheetResponseDto> timeSheetResponseDtoPage = timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
-
-        return ResponseEntity.ok().body(timeSheetResponseDtoPage);
+        return timeSheetPage.map((element) -> modelMapper.map(element, TimeSheetResponseDto.class));
     }
 
     public Page<TimeSheetResponseDto> listTimeSheets(int page)
@@ -328,26 +317,16 @@ public class AdminService {
         return userResponseDtoList;
     }
 
-    public List<TimeSheetResponseDto> searchTimeSheetForExport(Long userId, LocalDate localDate)
+    public List<TimeSheetResponseDto> searchTimeSheetForExport(String username, LocalDate startDate, LocalDate endDate)
     {
         Sort sort = Sort.by(Sort.Direction.DESC, "date");
 
-        List<TimeSheet> timeSheetList;
+        List<TimeSheet> timeSheetList = timeSheetRepository
+                .searchByUsernameAndDateRange(username, startDate, endDate, sort);
 
-        if (userId != null && localDate != null) {
-            timeSheetList = timeSheetRepository.findByUser_IdEqualsAndDateEquals(userId, localDate, sort);
-        } else if (userId != null) {
-            timeSheetList = timeSheetRepository.findByUser_IdEquals(userId, sort);
-        } else if (localDate != null) {
-            timeSheetList = timeSheetRepository.findByDateEquals(localDate, sort);
-        } else {
-            timeSheetList = timeSheetRepository.findAll(sort);
-        }
-
-        List<TimeSheetResponseDto> timeSheetResponseDtoList = timeSheetList.stream()
+        return timeSheetList.stream()
                 .map(element -> modelMapper.map(element, TimeSheetResponseDto.class))
                 .toList();
-        return timeSheetResponseDtoList;
     }
 
     private String sanitizeSheetName(String name) {

@@ -33,8 +33,9 @@ export class ProjectService {
     return this.http.put(environment.apiUrl+`/project/set_finished/${id}`, id);
   }
 
-  searchProject(q: string, page: number): Observable<PageResponse<Project>>
-  {
-    return this.http.get<PageResponse<Project>>(environment.apiUrl+`/project/search?q=${q}&page=${page}`);
+  searchProject(q: string, page: number): Observable<PageResponse<Project>> {
+    return this.http.get<PageResponse<Project>>(`${environment.apiUrl}/project/search`, {
+      params: { q, page: page.toString() }
+    });
   }
 }

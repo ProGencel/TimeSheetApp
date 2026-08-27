@@ -25,13 +25,6 @@ public class ProjectController {
         return projectService.saveProject(projectSaveDto);
     }
 
-    @GetMapping("search")
-    public Page<Project> search(@RequestParam(defaultValue = "") String q,
-                                @RequestParam(defaultValue = "0") int page)
-    {
-        return projectService.searchProject(q,page);
-    }
-
     @GetMapping("get/{id}")
     public ResponseEntity<?> get(@PathVariable Long id)
     {
@@ -48,5 +41,10 @@ public class ProjectController {
     public ResponseEntity<?> setFinished(@PathVariable Long id)
     {
         return projectService.setFinished(id);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<?> searchProject(@RequestParam String q, @RequestParam int page) {
+        return ResponseEntity.ok(projectService.searchMyProjects(q, page));
     }
 }

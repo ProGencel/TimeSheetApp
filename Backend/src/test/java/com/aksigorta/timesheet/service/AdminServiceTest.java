@@ -101,29 +101,33 @@ class AdminServiceTest {
     }
 
     @Test
-    void searchTimeSheet_shouldUseUserIdAndDateFilter_whenBothProvided() {
+    void searchTimeSheet_shouldUseUsernameAndDateRangeFilter_whenAllProvided() {
         TimeSheet t = new TimeSheet();
         Page<TimeSheet> page = new PageImpl<>(List.of(t));
-        LocalDate date = LocalDate.of(2026, 1, 1);
+        LocalDate startDate = LocalDate.of(2026, 1, 1);
+        LocalDate endDate = LocalDate.of(2026, 1, 31);
+        String username = "ali";
 
-        when(timeSheetRepository.findByUser_IdEqualsAndDateEquals(eq(1L), eq(date), any(Pageable.class)))
+        when(timeSheetRepository.searchByUsernameAndDateRange(eq(username), eq(startDate), eq(endDate), any(Pageable.class)))
                 .thenReturn(page);
 
-        ResponseEntity<?> result = adminService.searchTimeSheet(0, 1L, date);
+        Page<TimeSheetResponseDto> result = adminService.searchTimeSheet(0, username, startDate, endDate);
 
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(timeSheetRepository).findByUser_IdEqualsAndDateEquals(eq(1L), eq(date), any(Pageable.class));
+        assertThat(result).isNotNull();
+        verify(timeSheetRepository).searchByUsernameAndDateRange(eq(username), eq(startDate), eq(endDate), any(Pageable.class));
     }
 
     @Test
-    void searchTimeSheet_shouldUseFindAll_whenNoFiltersProvided() {
+    void searchTimeSheet_shouldPassNullFilters_whenNoFiltersProvided() {
         Page<TimeSheet> page = new PageImpl<>(List.of(new TimeSheet()));
-        when(timeSheetRepository.findAll(any(Pageable.class))).thenReturn(page);
 
-        ResponseEntity<?> result = adminService.searchTimeSheet(0, null, null);
+        when(timeSheetRepository.searchByUsernameAndDateRange(isNull(), isNull(), isNull(), any(Pageable.class)))
+                .thenReturn(page);
 
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(timeSheetRepository).findAll(any(Pageable.class));
+        Page<TimeSheetResponseDto> result = adminService.searchTimeSheet(0, null, null, null);
+
+        assertThat(result).isNotNull();
+        verify(timeSheetRepository).searchByUsernameAndDateRange(isNull(), isNull(), isNull(), any(Pageable.class));
     }
 
     @Test

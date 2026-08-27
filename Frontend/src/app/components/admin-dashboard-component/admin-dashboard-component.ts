@@ -1,6 +1,6 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {AdminService} from '../../services/admin-service/admin-service';
 import {TimeSheet} from '../../models/timesheet/TimeSheet';
 import {Observable} from 'rxjs';
@@ -27,11 +27,18 @@ export class AdminDashboardComponent implements OnInit {
   private adminService = inject(AdminService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private date: string | null = null;
+  private startDate: string | null = null;
+  private endDate: string | null = null;
+  private username: string | null = null;
   private q: string | null = null;
+  protected userSearchActive = false;
 
   protected isModalOpen = false;
   protected selectedProjectId: number | null = null;
+  protected isWeeklyHoursModalOpen = signal(false);
+  protected selectedUsername: string | null = null;
+  protected weeklyMinutes = signal<number | null>(null);
+  protected isWeeklyHoursLoading = signal(false);
 
 
   timesheets = signal<TimeSheet[]>([]);
@@ -41,7 +48,7 @@ export class AdminDashboardComponent implements OnInit {
   users = signal<UserResponse[]>([]);
   viewMode = signal<'timesheet' | 'user'>('timesheet');
   topThreeProjects = signal<ProjectDurationDto[]>([]);
-  protected isNewProjectModalOpen = signal(false);
+  isNewProjectModalOpen = signal(false);
 
 
   ngOnInit(): void {
@@ -53,19 +60,11 @@ export class AdminDashboardComponent implements OnInit {
     let request$: Observable<PageResponse<TimeSheet | UserResponse>>;
     let mode: 'timesheet' | 'user';
 
-    if(this.q)
-    {
-      request$ = this.adminService.searchUsers(page,this.q);
+    if (this.userSearchActive) {
+      request$ = this.adminService.searchUsers(page, this.q ?? '');
       mode = 'user';
-    }
-    else if(this.date == null)
-    {
-      request$ = this.adminService.getTimeSheets(page);
-      mode = 'timesheet';
-    }
-    else
-    {
-      request$ = this.adminService.searchTimeSheetsByDate(page,this.date);
+    } else {
+      request$ = this.adminService.searchTimeSheetsByDateRange(page, this.startDate, this.endDate, this.username);
       mode = 'timesheet';
     }
 
@@ -86,11 +85,22 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
     this.adminService.getTopThree().subscribe({
-    next: (response: any) => {
-      this.topThreeProjects.set(response);
-    }
-  })
+      next: (response: any) => {
+        this.topThreeProjects.set(response);
+      }
+    })
   }
+
+  weeklyHoursFormatted = computed(() => {
+    const minutes = this.weeklyMinutes();
+    if (minutes === null) {
+      return null;
+    }
+    return {
+      hours: Math.floor(minutes / 60),
+      remainingMinutes: minutes % 60,
+    };
+  });
 
   topThreeProjectsFormatted = computed(() =>
     this.topThreeProjects().map(project => ({
@@ -100,16 +110,45 @@ export class AdminDashboardComponent implements OnInit {
     }))
   );
 
-  onSearchTimeSheets(date: string)
+  onSearchTimeSheets(username: string, startDate: string, endDate: string)
   {
-    this.date = date;
+    this.username = username ? username : null;
+    this.startDate = startDate ? startDate : null;
+    this.endDate = endDate ? endDate : null;
+    this.userSearchActive = false;
     this.loadPage(0);
   }
 
-  pageNumbers = computed(() => { // otomatik olarak bir signal değiştiğinde güncelleniyor
+  closeWeeklyHoursModal(): void
+  {
+    this.isWeeklyHoursModalOpen.set(false);
+    this.selectedUsername = null;
+    this.weeklyMinutes.set(null);
+  }
+
+  onClickUser(userId: number, username: string): void
+  {
+    this.selectedUsername = username;
+    this.isWeeklyHoursModalOpen.set(true);
+    this.isWeeklyHoursLoading.set(true);
+    this.weeklyMinutes.set(null);
+
+    this.adminService.getWeeklyHoursByUserId(userId).subscribe({
+      next: (minutes) => {
+        this.weeklyMinutes.set(minutes);
+        this.isWeeklyHoursLoading.set(false);
+      },
+      error: (error) => {
+        console.log(error);
+        this.isWeeklyHoursLoading.set(false);
+      }
+    });
+  }
+
+  pageNumbers = computed(() => {
     const total = this.totalPages();
     const current = this.currentPage();
-    const delta = 2; // mevcut sayfanın etrafında kaç numara gösterilecek
+    const delta = 2;
     const range: (number | '...')[] = [];
 
     const start = Math.max(0, current - delta);
@@ -134,21 +173,18 @@ export class AdminDashboardComponent implements OnInit {
 
   onClean()
   {
-    this.date = null;
+    this.startDate = null;
+    this.endDate = null;
+    this.username = null;
     this.q = null;
+    this.userSearchActive = false;
     this.loadPage(0);
   }
 
   onSearchUser(q: string)
   {
-    if(q.length == 0)
-    {
-      this.q = " ";
-    }
-    else
-    {
-      this.q = q;
-    }
+    this.q = q;
+    this.userSearchActive = true;
     this.loadPage(0);
   }
 
@@ -158,64 +194,8 @@ export class AdminDashboardComponent implements OnInit {
     void this.router.navigate(['/login']);
   }
 
-  onCsvUser()
-  {
-    this.adminService.exportCsvUser(this.q).subscribe({
-      next: (response) => {
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = 'users.csv'; // fallback
-
-        if (contentDisposition) {
-          const match = contentDisposition.match(/filename=(.+)/);
-          if (match && match[1]) {
-            fileName = match[1].trim();
-          }
-        }
-
-        const blob = response.body as Blob;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);//İndirme işlemi için bellekte oluşan memory'i silip memory leak i engeller
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
-
-  onExcelUser()
-  {
-    this.adminService.exportExcelUser(this.q).subscribe({
-      next: (response) => {
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = 'users.xlsx';
-
-        if (contentDisposition) {
-          const match = contentDisposition.match(/filename=(.+)/);
-          if (match && match[1]) {
-            fileName = match[1].trim();
-          }
-        }
-
-        const blob = response.body as Blob;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url); // İndirme işlemi için bellekte oluşan memory'i silip memory leak'i engeller
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
-
   onCsvTimeSheet() {
-    this.adminService.exportCsvTimesheet(this.date).subscribe({
+    this.adminService.exportCsvTimesheet(this.startDate, this.endDate, this.username).subscribe({
       next: (response) => {
         const contentDisposition = response.headers.get('Content-Disposition');
         let fileName = 'timesheets.csv';
@@ -244,7 +224,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   onExcelTimeSheet() {
-    this.adminService.exportExcelTimesheet(this.date).subscribe({
+    this.adminService.exportExcelTimesheet(this.startDate, this.endDate, this.username).subscribe({
       next: (response) => {
         const contentDisposition = response.headers.get('Content-Disposition');
         let fileName = 'timesheets.xlsx';
@@ -265,6 +245,62 @@ export class AdminDashboardComponent implements OnInit {
         a.click();
 
         window.URL.revokeObjectURL(url); // Memory leak'i engellemek için bellekte oluşan URL'yi sil
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  onCsvUser()
+  {
+    this.adminService.exportCsvUser(this.q).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'users.csv'; // fallback
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url); // İndirme işlemi için bellekte oluşan memory'i silip memory leak i engeller
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  onExcelUser()
+  {
+    this.adminService.exportExcelUser(this.q).subscribe({
+      next: (response) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'users.xlsx';
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename=(.+)/);
+          if (match && match[1]) {
+            fileName = match[1].trim();
+          }
+        }
+
+        const blob = response.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url); // İndirme işlemi için bellekte oluşan memory'i silip memory leak'i engeller
       },
       error: (error) => {
         console.log(error);
